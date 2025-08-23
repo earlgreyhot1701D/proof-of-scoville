@@ -1,0 +1,56 @@
+🌶️ Proof of Scoville – Meta Account & Contract Launch Checklist
+=============================================================
+
+🔐 GOAL: Set up a Meta Account and launch a smart contract via Xion’s Quick Start to generate the 4 required .env variables for your Expo app.
+
+📍Location: https://quickstart.dev.testnet.burnt.com
+
+=============================================================
+
+1️⃣ ACCESS XION QUICK START
+☐ Go to https://quickstart.dev.testnet.burnt.com
+☐ Click “Quick Start” at the top
+☐ Choose **User Map** from the template options
+
+2️⃣ CREATE YOUR META ACCOUNT
+☐ Click **Launch** (this will spin up your Meta Account and the User Map contract)
+☐ When prompted, sign in (use email or social login — this will create your testnet account)
+☐ Wait for the deployment spinner to finish (can take ~10–30 seconds)
+
+3️⃣ FUND YOUR TREASURY
+☐ Click the **Fund Treasury** button
+☐ Wait for confirmation — this provides fake testnet funds to the contract
+☐ You may see a success message or updated balances
+
+4️⃣ LOCATE & COPY CONTRACT DETAILS
+☐ Look for the following values on the dashboard or in the “View Contract” section:
+   ▪ EXPO_PUBLIC_USER_MAP_CONTRACT_ADDRESS
+   ▪ EXPO_PUBLIC_TREASURY_CONTRACT_ADDRESS
+   ▪ EXPO_PUBLIC_RPC_ENDPOINT
+   ▪ EXPO_PUBLIC_REST_ENDPOINT
+
+5️⃣ CREATE `.env.local` FILE
+☐ In your project root folder (same level as `App.js` or `package.json`), create a file named: `.env.local`
+☐ Paste the 4 variables in this format:
+
+EXPO_PUBLIC_USER_MAP_CONTRACT_ADDRESS=0x...
+EXPO_PUBLIC_TREASURY_CONTRACT_ADDRESS=0x...
+EXPO_PUBLIC_RPC_ENDPOINT=https://...
+EXPO_PUBLIC_REST_ENDPOINT=https://...
+
+☐ Save the file
+☐ Make sure it is NOT committed to GitHub (add `.env.local` to `.gitignore`)
+
+6️⃣ RESTART EXPO
+☐ Close the Expo server (Ctrl + C in terminal)
+☐ Restart it with: `npx expo start`
+☐ Confirm no errors and test if env vars are visible (optional debug screen)
+
+=============================================================
+
+🎉 SUCCESS CHECK:
+☐ `.env.local` file exists in project root
+☐ All 4 EXPO_PUBLIC_ variables are present
+☐ Expo app runs with no startup errors
+☐ You are ready to build the spicy form and trigger verification!
+
