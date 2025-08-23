@@ -1,5 +1,5 @@
-import EnvCheckScreen from '../components/EnvCheckScreen';
+import SauceEntryScreen from '../components/SauceEntryScreen';
 
 export default function Index() {
-  return <EnvCheckScreen />;
+  return <SauceEntryScreen />;
 }
