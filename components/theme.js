@@ -15,4 +15,3 @@ export const theme = {
   space: { xs: 6, sm: 10, md: 16, lg: 24, xl: 32 },
   type: { label: 15, body: 16, chip: 14, header: 22 },
 };
-
