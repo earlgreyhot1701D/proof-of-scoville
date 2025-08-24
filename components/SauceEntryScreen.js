@@ -402,17 +402,18 @@ const simulateVerifiableRead = useCallback(async (url) => {
           {!!urlError && (
             <Text style={{ color: theme.colors.error, fontSize: 12 }}>{urlError}</Text>
           )}
-          {ingredientURL && !urlError && isVerifiedSource !== null && (
-            <Text
-              style={{
-                color: isVerifiedSource ? theme.colors.heat.mild : theme.colors.error,
-                fontSize: 12,
-                marginTop: 4,
-              }}
-            >
-              {isVerifiedSource ? 'Source Verified ✅' : 'Not Verified ❌'}
-            </Text>
-          )}
+          {ingredientURL && !urlError && isVerifiedSource !== null ? (
+  <Text
+    style={{
+      color: isVerifiedSource ? theme.colors.heat.mild : theme.colors.error,
+      fontSize: 12,
+      marginTop: 4,
+    }}
+  >
+    {isVerifiedSource ? 'Source Verified ✅' : 'Not Verified ❌'}
+  </Text>
+) : null}
+
         </SectionCard>
       </ScrollView>
 
