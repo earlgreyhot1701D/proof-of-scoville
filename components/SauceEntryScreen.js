@@ -62,6 +62,18 @@ function validateUrl(url) {
   }
 }
 
+function normalizeUrl(rawUrl) {
+  if (!rawUrl) return '';
+  let trimmed = rawUrl.trim();
+
+  // If no protocol is present, prepend https://
+  if (!/^https?:\/\//i.test(trimmed)) {
+    trimmed = 'https://' + trimmed;
+  }
+
+  return trimmed;
+}
+
 const validateSauceForm = ({ heat, oilSeedRatio, urlError, ingredientURL, isVerifiedSource }) => {
   if (!heat?.trim()) return { field: 'heat', message: 'Scoville heat is required' };
   const h = parseInt(heat, 10);
@@ -197,7 +209,7 @@ const simulateVerifiableRead = useCallback(async (url) => {
         setUrlError('');
         return;
       }
-      const trimmed = url.trim();
+      const trimmed = normalizeUrl(url);
       const isValid = trimmed.startsWith('http') && validateUrl(trimmed);
       setUrlError(isValid ? '' : 'Invalid URL');
 
@@ -245,9 +257,9 @@ const simulateVerifiableRead = useCallback(async (url) => {
       smokiness,
       oilSeedRatio: parseFloat(oilSeedRatio),
       ingredientURL: (() => {
-        const trimmed = ingredientURL.trim();
-        return trimmed.startsWith('http') && validateUrl(trimmed) ? trimmed : null;
-      })(),
+  const normalized = normalizeUrl(ingredientURL);
+  return validateUrl(normalized) ? normalized : null;
+})(),
       timestamp: new Date().toISOString(),
     };
 
@@ -348,7 +360,6 @@ const simulateVerifiableRead = useCallback(async (url) => {
             value={crispLevel}
             onChange={setCrispLevel}
             disabled={crispSource === 'none'}
-            hint={crispSourceHints[crispSource]}
           />
         </SectionCard>
 
