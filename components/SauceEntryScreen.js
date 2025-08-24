@@ -1,6 +1,6 @@
 // SauceEntryScreen.js – Fully Upgraded 🌶️
 import debounce from 'lodash.debounce';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   Alert,
   Animated,
@@ -15,7 +15,6 @@ import {
 import { userMap } from '../lib/dave';
 
 import { ChipGroup } from './chip';
-import { useHeatColor } from './helpers';
 import { SectionCard } from './SectionCard';
 import { StickySubmit } from './StickySubmit';
 import { theme } from './theme';
@@ -90,18 +89,16 @@ export default function SauceEntryScreen() {
   const [ingredientURL, setIngredientURL] = useState('');
   const [urlError, setUrlError] = useState('');
 
-  const heatAnim = useRef(new Animated.Value(0)).current;
-  const getHeatColor = useHeatColor();
-
-  useEffect(() => {
-    const val = Math.min(1, Math.max(0, parseInt(heat || '0', 10) / 16000000));
-    Animated.timing(heatAnim, {
-      toValue: val,
-      duration: 250,
-      easing: Easing.out(Easing.cubic),
-      useNativeDriver: false,
-    }).start();
-  }, [heat]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+useEffect(() => {
+  const val = Math.min(1, Math.max(0, parseInt(heat || '0', 10) / 16000000));
+  Animated.timing(heatAnim, {
+    toValue: val,
+    duration: 250,
+    easing: Easing.out(Easing.cubic),
+    useNativeDriver: false,
+  }).start();
+}, [heat]);
 
   const resetForm = () => {
     setSauceName('');
