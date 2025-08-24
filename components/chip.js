@@ -20,9 +20,7 @@ export function Chip({ label, active, onPress, disabled, colorOverride }) {
       accessibilityState={{ disabled, selected: !!active }}
       accessibilityLabel={label}
     >
-      <Text style={[chipStyles.chipText, active && chipStyles.chipTextActive]}>
-        {label}
-      </Text>
+      <Text style={[chipStyles.chipText, active && chipStyles.chipTextActive]}>{label}</Text>
     </TouchableOpacity>
   );
 }
@@ -30,17 +28,19 @@ export function Chip({ label, active, onPress, disabled, colorOverride }) {
 export function ChipGroup({ label, options, value, onChange, disabled, hint, getColor }) {
   return (
     <View style={{ marginBottom: theme.space.lg }}>
-      <Text style={{
-        fontSize: theme.type.label,
-        color: theme.colors.text,
-        fontWeight: '700',
-        marginBottom: theme.space.sm,
-      }}>
+      <Text
+        style={{
+          fontSize: theme.type.label,
+          color: theme.colors.text,
+          fontWeight: '700',
+          marginBottom: theme.space.sm,
+        }}
+      >
         {label}
       </Text>
 
       <View style={[chipStyles.rowWrap, disabled && { opacity: 0.6 }]}>
-        {options.map(opt => (
+        {options.map((opt) => (
           <Chip
             key={opt}
             label={opt}
@@ -53,11 +53,13 @@ export function ChipGroup({ label, options, value, onChange, disabled, hint, get
       </View>
 
       {!!hint && (
-        <Text style={{
-          color: theme.colors.textMuted,
-          fontSize: 12,
-          marginTop: 4,
-        }}>
+        <Text
+          style={{
+            color: theme.colors.textMuted,
+            fontSize: 12,
+            marginTop: 4,
+          }}
+        >
           {hint}
         </Text>
       )}

@@ -29,7 +29,17 @@ const VALIDATION_RULES = {
 
 const SAUCE_OPTIONS = {
   garlic: ['low', 'med', 'high'],
-  crispSources: ['garlic', 'onion', 'peanut', 'pumpkin-seed', 'sesame', 'sauce-texture', 'none', 'other', 'tortilla-chip'],
+  crispSources: [
+    'garlic',
+    'onion',
+    'peanut',
+    'pumpkin-seed',
+    'sesame',
+    'sauce-texture',
+    'none',
+    'other',
+    'tortilla-chip',
+  ],
   crispLevels: ['light', 'medium', 'heavy'],
   smokiness: ['none', 'light', 'medium', 'strong'],
 };
@@ -112,7 +122,7 @@ export default function SauceEntryScreen() {
       const isValid = trimmed.startsWith('http') && validateUrl(trimmed);
       setUrlError(isValid ? '' : 'Invalid URL');
     }, VALIDATION_RULES.URL_DEBOUNCE_MS),
-    []
+    [],
   );
 
   useEffect(() => {
@@ -151,9 +161,14 @@ export default function SauceEntryScreen() {
   };
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
-      <ScrollView contentContainerStyle={{ padding: theme.space.lg, paddingBottom: 120 }} keyboardShouldPersistTaps="handled">
-
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={{ flex: 1 }}
+    >
+      <ScrollView
+        contentContainerStyle={{ padding: theme.space.lg, paddingBottom: 120 }}
+        keyboardShouldPersistTaps="handled"
+      >
         <SectionCard title="Name">
           <TextInput
             value={sauceName}
@@ -171,8 +186,18 @@ export default function SauceEntryScreen() {
             keyboardType="number-pad"
             style={inputStyle}
           />
-          <Text style={{ color: theme.colors.textMuted, fontSize: 12 }}>Typical: Mild &lt;5k, Medium 5k–50k, Hot 50k+</Text>
-          <View style={{ height: 8, backgroundColor: theme.colors.surfaceAlt, borderRadius: 999, overflow: 'hidden', marginTop: 6 }}>
+          <Text style={{ color: theme.colors.textMuted, fontSize: 12 }}>
+            Typical: Mild &lt;5k, Medium 5k–50k, Hot 50k+
+          </Text>
+          <View
+            style={{
+              height: 8,
+              backgroundColor: theme.colors.surfaceAlt,
+              borderRadius: 999,
+              overflow: 'hidden',
+              marginTop: 6,
+            }}
+          >
             <Animated.View
               style={{
                 height: '100%',
@@ -184,12 +209,27 @@ export default function SauceEntryScreen() {
         </SectionCard>
 
         <SectionCard title="Flavor">
-          <ChipGroup label="Garlic Intensity" options={SAUCE_OPTIONS.garlic} value={garlic} onChange={setGarlic} />
-          <ChipGroup label="Smokiness Level" options={SAUCE_OPTIONS.smokiness} value={smokiness} onChange={setSmokiness} />
+          <ChipGroup
+            label="Garlic Intensity"
+            options={SAUCE_OPTIONS.garlic}
+            value={garlic}
+            onChange={setGarlic}
+          />
+          <ChipGroup
+            label="Smokiness Level"
+            options={SAUCE_OPTIONS.smokiness}
+            value={smokiness}
+            onChange={setSmokiness}
+          />
         </SectionCard>
 
         <SectionCard title="Texture">
-          <ChipGroup label="Crunch Source" options={SAUCE_OPTIONS.crispSources} value={crispSource} onChange={setCrispSource} />
+          <ChipGroup
+            label="Crunch Source"
+            options={SAUCE_OPTIONS.crispSources}
+            value={crispSource}
+            onChange={setCrispSource}
+          />
           <ChipGroup
             label="Crunch Level"
             options={SAUCE_OPTIONS.crispLevels}
@@ -223,9 +263,10 @@ export default function SauceEntryScreen() {
             autoCapitalize="none"
             autoCorrect={false}
           />
-          {!!urlError && <Text style={{ color: theme.colors.error, fontSize: 12 }}>{urlError}</Text>}
+          {!!urlError && (
+            <Text style={{ color: theme.colors.error, fontSize: 12 }}>{urlError}</Text>
+          )}
         </SectionCard>
-
       </ScrollView>
       <StickySubmit disabled={!heat || urlError} onPress={handleSubmit} />
     </KeyboardAvoidingView>
@@ -241,4 +282,3 @@ const inputStyle = {
   backgroundColor: theme.colors.surfaceAlt,
   color: theme.colors.text,
 };
-

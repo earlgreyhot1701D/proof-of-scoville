@@ -22,6 +22,7 @@
 ## 🧾 .env.local — What it does
 
 This file stores your **environment variables** that connect your mobile app to:
+
 - Your **Treasury contract** (used for gasless writes)
 - The **RPC and REST endpoints** for the XION testnet
 - Your **Reclaim App ID and Secret** (used for zkTLS flow)
@@ -60,6 +61,7 @@ EXPO_PUBLIC_RUM_CONTRACT_ADDRESS=... # optional
 You're allowed to rebrand from "Proof of Salsa" as the theme evolves toward chili crisps, sauces, or heat.
 
 Possible names:
+
 - **Proof of Scoville** (most on-theme for verification + spice level)
 - **VeriSpice**
 - **ScovChain**
@@ -77,6 +79,7 @@ We can lock this down once you decide if you're going chili crisp only, or a bro
 ## ✅ Summary
 
 You're building:
+
 - A verifiable flavor tracking app that demonstrates zkTLS + on-chain proof without hype
 - A beginner-friendly project that matches Devpost's theme and tone
 - A playful but technically serious demonstration of the real-world potential of verifiable claims

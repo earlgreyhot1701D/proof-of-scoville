@@ -1,6 +1,7 @@
 # 🔥 Minimum DAVE Demo (MDD) – Proof of Scoville
 
 A simple mobile prototype that:
+
 - ✅ Tracks spicy condiments (e.g., salsa matcha, chili crisp)
 - ✅ Proves entries using the Xion DAVE SDK (blockchain verification)
 - ✅ Runs on mobile using Expo Go
@@ -16,7 +17,6 @@ A simple mobile prototype that:
   - Tool: React Native (Expo)
   - Additional attributes: crisp level, garlicky-ness, oil ratio
   - Tool: Local state or mock data (JSON-based)
-
 
 - [ ] **Display Sauce Entries**
   - Show list of added condiments
