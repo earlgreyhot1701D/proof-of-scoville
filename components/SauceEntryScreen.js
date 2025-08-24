@@ -221,19 +221,13 @@ export default function SauceEntryScreen() {
 function GarlicSelector({ value, onChange }) {
   return (
     <View style={styles.segmentGroup}>
-      <Text style={styles.label}>Garlic Intensity</Text>
-      <View style={styles.segmentContainer}>
-        {SAUCE_OPTIONS.garlic.map((level) => (
-          <TouchableOpacity
-            key={level}
-            style={[styles.segment, value === level && styles.selectedSegment]}
-            onPress={() => onChange(level)}
-          >
-            <Text style={[styles.segmentText, value === level && styles.selectedText]}>
-              {level}
-            </Text>
-          </TouchableOpacity>
-        ))}
+      <ChipGroup
+  label="Garlic Intensity"
+  options={SAUCE_OPTIONS.garlic}
+  value={garlic}
+  onChange={setGarlic}
+/>
+
       </View>
     </View>
   );
