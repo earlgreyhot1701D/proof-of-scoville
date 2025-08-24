@@ -1,20 +1,24 @@
-
+// SauceEntryScreen.js – Fully Upgraded 🌶️
 import debounce from 'lodash.debounce';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Alert,
-  Button,
+  Animated,
+  Easing,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  StyleSheet,
   Text,
   TextInput,
-  TouchableOpacity,
   View,
 } from 'react-native';
 import { userMap } from '../lib/dave';
 
+import { ChipGroup } from './chip';
+import { useHeatColor } from './helpers';
+import { SectionCard } from './SectionCard';
+import { StickySubmit } from './StickySubmit';
+import { theme } from './theme';
 
 const VALIDATION_RULES = {
   MAX_SCOVILLE: 16000000,
@@ -25,17 +29,7 @@ const VALIDATION_RULES = {
 
 const SAUCE_OPTIONS = {
   garlic: ['low', 'med', 'high'],
-  crispSources: [
-    'garlic',
-    'onion',
-    'peanut',
-    'pumpkin-seed',
-    'sesame',
-    'sauce-texture',
-    'none',
-    'other',
-    'tortilla-chip',
-  ],
+  crispSources: ['garlic', 'onion', 'peanut', 'pumpkin-seed', 'sesame', 'sauce-texture', 'none', 'other', 'tortilla-chip'],
   crispLevels: ['light', 'medium', 'heavy'],
   smokiness: ['none', 'light', 'medium', 'strong'],
 };
@@ -85,6 +79,19 @@ export default function SauceEntryScreen() {
   const [oilSeedRatio, setOilSeedRatio] = useState('');
   const [ingredientURL, setIngredientURL] = useState('');
   const [urlError, setUrlError] = useState('');
+
+  const heatAnim = useRef(new Animated.Value(0)).current;
+  const getHeatColor = useHeatColor();
+
+  useEffect(() => {
+    const val = Math.min(1, Math.max(0, parseInt(heat || '0', 10) / 16000000));
+    Animated.timing(heatAnim, {
+      toValue: val,
+      duration: 250,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: false,
+    }).start();
+  }, [heat]);
 
   const resetForm = () => {
     setSauceName('');
@@ -144,174 +151,94 @@ export default function SauceEntryScreen() {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={{ flex: 1 }}
-    >
-      <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-        <Text style={styles.label}>Sauce Name</Text>
-        <TextInput
-          value={sauceName}
-          onChangeText={setSauceName}
-          placeholder="e.g. Macha Inferno"
-          style={styles.input}
-        />
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
+      <ScrollView contentContainerStyle={{ padding: theme.space.lg, paddingBottom: 120 }} keyboardShouldPersistTaps="handled">
 
-        <Text style={styles.label}>Scoville Heat Level</Text>
-        <TextInput
-          value={heat}
-          onChangeText={setHeat}
-          placeholder="e.g. 8000"
-          keyboardType="number-pad"
-          style={styles.input}
-        />
-      <Text style={styles.hint}>
-  Typical: Mild &lt;5k, Medium 5k–50k, Hot 50k+ — measured in Scoville Heat Units (SHU)
-</Text>
-<View style={{ height: 10 }} />
-        <GarlicSelector value={garlic} onChange={setGarlic} />
-        <SmokinessSelector value={smokiness} onChange={setSmokiness} />
+        <SectionCard title="Name">
+          <TextInput
+            value={sauceName}
+            onChangeText={setSauceName}
+            placeholder="e.g. Macha Inferno"
+            style={inputStyle}
+          />
+        </SectionCard>
 
-        <OptionSelector
-          label="Crunch Source"
-          options={SAUCE_OPTIONS.crispSources}
-          value={crispSource}
-          onChange={setCrispSource}
-        />
+        <SectionCard title="Heat">
+          <TextInput
+            value={heat}
+            onChangeText={setHeat}
+            placeholder="e.g. 8000"
+            keyboardType="number-pad"
+            style={inputStyle}
+          />
+          <Text style={{ color: theme.colors.textMuted, fontSize: 12 }}>Typical: Mild &lt;5k, Medium 5k–50k, Hot 50k+</Text>
+          <View style={{ height: 8, backgroundColor: theme.colors.surfaceAlt, borderRadius: 999, overflow: 'hidden', marginTop: 6 }}>
+            <Animated.View
+              style={{
+                height: '100%',
+                width: heatAnim.interpolate({ inputRange: [0, 1], outputRange: ['2%', '100%'] }),
+                backgroundColor: getHeatColor(heat),
+              }}
+            />
+          </View>
+        </SectionCard>
 
-        <OptionSelector
-          label="Crunch Level"
-          options={SAUCE_OPTIONS.crispLevels}
-          value={crispLevel}
-          onChange={setCrispLevel}
-          disabled={crispSource === 'none'}
-          hint={crispSourceHints[crispSource]}
-        />
+        <SectionCard title="Flavor">
+          <ChipGroup label="Garlic Intensity" options={SAUCE_OPTIONS.garlic} value={garlic} onChange={setGarlic} />
+          <ChipGroup label="Smokiness Level" options={SAUCE_OPTIONS.smokiness} value={smokiness} onChange={setSmokiness} />
+        </SectionCard>
 
-        <Text style={styles.label}>Oil to Seed Ratio</Text>
-        <TextInput
-          value={oilSeedRatio}
-          onChangeText={setOilSeedRatio}
-          placeholder="0.0–1.0"
-          keyboardType="decimal-pad"
-          style={styles.input}
-        />
+        <SectionCard title="Texture">
+          <ChipGroup label="Crunch Source" options={SAUCE_OPTIONS.crispSources} value={crispSource} onChange={setCrispSource} />
+          <ChipGroup
+            label="Crunch Level"
+            options={SAUCE_OPTIONS.crispLevels}
+            value={crispLevel}
+            onChange={setCrispLevel}
+            disabled={crispSource === 'none'}
+            hint={crispSourceHints[crispSource]}
+          />
+        </SectionCard>
 
-        <Text style={styles.label}>Ingredient URL (Optional)</Text>
-        <TextInput
-          value={ingredientURL}
-          onChangeText={(url) => {
-            setIngredientURL(url);
-            setUrlError('');
-            validateUrlDebounced(url);
-          }}
-          placeholder="https://..."
-          style={[styles.input, urlError ? styles.errorBorder : null]}
-          autoCapitalize="none"
-          autoCorrect={false}
-        />
-        {!!urlError && <Text style={styles.errorText}>{urlError}</Text>}
+        <SectionCard title="Ratio">
+          <TextInput
+            value={oilSeedRatio}
+            onChangeText={setOilSeedRatio}
+            placeholder="0.0–1.0"
+            keyboardType="decimal-pad"
+            style={inputStyle}
+          />
+        </SectionCard>
 
-        <Button title="Submit" onPress={handleSubmit} />
+        <SectionCard title="Ingredient Link">
+          <TextInput
+            value={ingredientURL}
+            onChangeText={(url) => {
+              setIngredientURL(url);
+              setUrlError('');
+              validateUrlDebounced(url);
+            }}
+            placeholder="https://..."
+            style={[inputStyle, urlError ? { borderColor: theme.colors.error } : null]}
+            autoCapitalize="none"
+            autoCorrect={false}
+          />
+          {!!urlError && <Text style={{ color: theme.colors.error, fontSize: 12 }}>{urlError}</Text>}
+        </SectionCard>
+
       </ScrollView>
+      <StickySubmit disabled={!heat || urlError} onPress={handleSubmit} />
     </KeyboardAvoidingView>
   );
 }
 
-function GarlicSelector({ value, onChange }) {
-  return (
-    <View style={styles.segmentGroup}>
-      <ChipGroup
-  label="Garlic Intensity"
-  options={SAUCE_OPTIONS.garlic}
-  value={garlic}
-  onChange={setGarlic}
-/>
-
-      </View>
-    </View>
-  );
-}
-
-function SmokinessSelector({ value, onChange }) {
-  return (
-    <View style={styles.segmentGroup}>
-      <Text style={styles.label}>Smokiness Level</Text>
-      <View style={styles.segmentContainer}>
-        {SAUCE_OPTIONS.smokiness.map((level) => (
-          <TouchableOpacity
-            key={level}
-            style={[styles.segment, value === level && styles.selectedSegment]}
-            onPress={() => onChange(level)}
-          >
-            <Text style={[styles.segmentText, value === level && styles.selectedText]}>
-              {level}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-    </View>
-  );
-}
-
-function OptionSelector({ label, options, value, onChange, disabled, hint }) {
-  return (
-    <View style={styles.segmentGroup}>
-      <Text style={styles.label}>{label}</Text>
-      <View style={[styles.segmentContainer, disabled && styles.segmentDisabled]}>
-        {options.map((opt) => (
-          <TouchableOpacity
-            key={opt}
-            style={[styles.segment, value === opt && styles.selectedSegment]}
-            onPress={() => {
-              if (!disabled) onChange(opt);
-            }}
-            disabled={disabled}
-          >
-            <Text style={[styles.segmentText, value === opt && styles.selectedText]}>{opt}</Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-      {!!hint && <Text style={styles.hint}>{hint}</Text>}
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: { padding: 20 },
-  label: { fontSize: 16, fontWeight: '600', marginBottom: 8 },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 10,
-    marginBottom: 20,
-    borderRadius: 4,
-  },
-  segmentGroup: { marginBottom: 20 },
-  segmentContainer: { flexDirection: 'row', flexWrap: 'wrap' },
-  segment: {
-    paddingVertical: 6,
-    paddingHorizontal: 16,
-    backgroundColor: '#eee',
-    borderRadius: 6,
-    marginRight: 10,
-    marginBottom: 10,
-    minWidth: 100,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  segmentText: {
-    fontSize: 14,
-    color: '#333',
-    textAlign: 'center',
-    flexShrink: 1,
-    flexWrap: 'wrap',
-  },
-  selectedSegment: { backgroundColor: '#ff9800' },
-  selectedText: { color: '#fff', fontWeight: 'bold' },
-  segmentDisabled: { opacity: 0.5 },
-  errorBorder: { borderColor: 'red' },
-  errorText: { color: 'red', marginBottom: 10 },
-  hint: { fontStyle: 'italic', fontSize: 12, color: '#666', marginTop: 5 },
-});
+const inputStyle = {
+  borderWidth: 1,
+  borderColor: theme.colors.outline,
+  padding: 10,
+  marginBottom: 16,
+  borderRadius: theme.radii.md,
+  backgroundColor: theme.colors.surfaceAlt,
+  color: theme.colors.text,
+};
 
