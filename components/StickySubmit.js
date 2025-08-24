@@ -1,18 +1,20 @@
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { theme } from './theme';
 
 export function StickySubmit({ disabled, onPress }) {
   return (
-    <View
+    <SafeAreaView
+      edges={['bottom']}
       style={{
         position: 'absolute',
         left: 0,
         right: 0,
         bottom: 0,
-        padding: theme.space.md,
         backgroundColor: 'rgba(14,16,19,0.9)',
         borderTopWidth: 1,
         borderTopColor: theme.colors.outline,
+        padding: theme.space.md,
       }}
     >
       <TouchableOpacity
@@ -35,6 +37,6 @@ export function StickySubmit({ disabled, onPress }) {
           SUBMIT
         </Text>
       </TouchableOpacity>
-    </View>
+    </SafeAreaView>
   );
 }
