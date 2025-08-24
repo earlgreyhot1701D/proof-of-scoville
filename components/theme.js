@@ -16,18 +16,3 @@ export const theme = {
   type: { label: 15, body: 16, chip: 14, header: 22 },
 };
 
-// helpers.js
-import { useMemo } from 'react';
-
-// ✅ Memoized heat color calculation
-export const useHeatColor = () =>
-  useMemo(
-    () => (heat) => {
-      const h = parseInt(heat, 10);
-      if (isNaN(h)) return '#999';
-      if (h <= 5000) return '#48C774'; // mild
-      if (h <= 50000) return '#FFDD57'; // med
-      return '#F14668'; // hot
-    },
-    [],
-  );
