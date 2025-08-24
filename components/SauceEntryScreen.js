@@ -110,6 +110,7 @@ export default function SauceEntryScreen() {
   const [ingredientURL, setIngredientURL] = useState('');
   const [urlError, setUrlError] = useState('');
   const [isVerifiedSource, setIsVerifiedSource] = useState(null);
+  const [lastVerifiedUrl, setLastVerifiedUrl] = useState('');
 
   // refs for friendlier focus on validation errors
   const heatRef = useRef(null);
@@ -191,37 +192,60 @@ const simulateVerifiableRead = useCallback(async (url) => {
     'chile de árbol',
   ];
 
-  try {
-    const res = await fetch(url); // simulate verifiable.read() with fetch
+  const tryFetch = async () => {
+    const res = await fetch(url);
     const html = await res.text();
     return trustedSignals.some((term) => html.toLowerCase().includes(term));
+  };
+
+  try {
+    return await tryFetch();
   } catch (err) {
-    console.warn('Verification failed:', err.message);
-    return false;
+    console.warn('Verification failed (1st attempt):', err.message);
+    // Retry after brief pause
+    await new Promise((res) => setTimeout(res, 200));
+    try {
+      return await tryFetch();
+    } catch (err2) {
+      console.warn('Verification failed (retry):', err2.message);
+      return false;
+    }
   }
 }, []);
- 
 
   const validateUrlDebounced = useCallback(
-    debounce(async (url) => {
-      if (!url) {
-        setIsVerifiedSource(null);
-        setUrlError('');
+  debounce(async (url) => {
+    if (!url) {
+      setIsVerifiedSource(null);
+      setUrlError('');
+      return;
+    }
+
+    const trimmed = normalizeUrl(url);
+    const isValid = trimmed.startsWith('http') && validateUrl(trimmed);
+    setUrlError(isValid ? '' : 'Invalid URL');
+
+    if (isValid) {
+      // Skip redundant re-check if same URL already verified
+      if (trimmed === lastVerifiedUrl && isVerifiedSource === true) {
         return;
       }
-      const trimmed = normalizeUrl(url);
-      const isValid = trimmed.startsWith('http') && validateUrl(trimmed);
-      setUrlError(isValid ? '' : 'Invalid URL');
 
-      if (isValid) {
-        const verified = await simulateVerifiableRead(trimmed);
-        setIsVerifiedSource(verified);
+      const verified = await simulateVerifiableRead(trimmed);
+
+      if (verified) {
+        setIsVerifiedSource(true);
+        setLastVerifiedUrl(trimmed);
       } else {
-        setIsVerifiedSource(null);
+        setIsVerifiedSource(false);
       }
-    }, VALIDATION_RULES.URL_DEBOUNCE_MS),
-    [simulateVerifiableRead],
-  );
+    } else {
+      setIsVerifiedSource(null);
+    }
+  }, VALIDATION_RULES.URL_DEBOUNCE_MS),
+  [simulateVerifiableRead, isVerifiedSource, lastVerifiedUrl],
+);
+
 
   useEffect(() => {
     return () => {
