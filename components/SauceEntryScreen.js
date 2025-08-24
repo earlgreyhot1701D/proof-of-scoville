@@ -156,7 +156,7 @@ export default function SauceEntryScreen() {
       await userMap.set(data);
       resetForm();
       Alert.alert('Success', 'Sauce logged!');
-    } catch (err) {
+    } catch (_err) {
       Alert.alert('Chain Error', 'Network busy, try again');
     }
   };
