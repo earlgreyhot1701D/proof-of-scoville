@@ -94,15 +94,15 @@ export default function SauceEntryScreen() {
   const getHeatColor = useHeatColor();
 
   useEffect(() => {
-  const val = Math.min(1, Math.max(0, parseInt(heat || '0', 10) / 16000000));
-  Animated.timing(heatAnim, {
-    toValue: val,
-    duration: 250,
-    easing: Easing.out(Easing.cubic),
-    useNativeDriver: false,
-  }).start();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-}, [heat]);
+    const val = Math.min(1, Math.max(0, parseInt(heat || '0', 10) / 16000000));
+    Animated.timing(heatAnim, {
+      toValue: val,
+      duration: 250,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: false,
+    }).start();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [heat]);
 
   const resetForm = () => {
     setSauceName('');
@@ -117,14 +117,14 @@ export default function SauceEntryScreen() {
   };
 
   const validateUrlDebounced = useCallback(
-    debounce((url) => {
-      if (!url) return;
-      const trimmed = url.trim();
-      const isValid = trimmed.startsWith('http') && validateUrl(trimmed);
-      setUrlError(isValid ? '' : 'Invalid URL');
-    }, VALIDATION_RULES.URL_DEBOUNCE_MS),
-    [],
-  );
+  debounce((url) => {
+    if (!url) return;
+    const trimmed = url.trim();
+    const isValid = trimmed.startsWith('http') && validateUrl(trimmed);
+    setUrlError(isValid ? '' : 'Invalid URL');
+  }, VALIDATION_RULES.URL_DEBOUNCE_MS),
+  [validateUrl, setUrlError],
+);
 
   useEffect(() => {
     return () => {
