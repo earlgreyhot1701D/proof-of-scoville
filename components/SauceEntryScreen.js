@@ -134,11 +134,61 @@ export default function SauceEntryScreen() {
   };
 
   // Placeholder for future verifiable.read via zkTLS or a trusted endpoint
-  const simulateVerifiableRead = useCallback(async (url) => {
-    if (!url || typeof url !== 'string') return false;
-    const safe = url.toLowerCase();
-    return safe.includes('hotsauce') || safe.includes('scoville');
-  }, []);
+const simulateVerifiableRead = useCallback(async (url) => {
+  if (!url || typeof url !== 'string') return false;
+
+  const trustedSignals = [
+    'salsa',
+    'macha',
+    'salsa macha',
+    'bien macha',
+    'chile oil',
+    'chili oil',
+    'mexican salsa',
+    'salsa artesanal',
+    'picante',
+    'comandanta',
+    'mama teav',
+    'la botanera',
+    'valentina',
+    'el yucateco',
+    'tajín',
+    'hot sauce',
+    'hotsauce',
+    'scoville',
+    'scoville heat units',
+    'shu',
+    'spicy sauce',
+    'crispy garlic',
+    'fried shallot',
+    'oil to seed',
+    'pumpkin seed',
+    'garlic confit',
+    'peanut crunch',
+    'crunchy topping',
+    'add to cart',
+    'shop now',
+    'ingredients',
+    'nutrition facts',
+    'family recipe',
+    'heirloom sauce',
+    'salsa casera',
+    'receta familiar',
+    'hecho en méxico',
+    'chile seco',
+    'chile de árbol',
+  ];
+
+  try {
+    const res = await fetch(url); // simulate verifiable.read() with fetch
+    const html = await res.text();
+    return trustedSignals.some((term) => html.toLowerCase().includes(term));
+  } catch (err) {
+    console.warn('Verification failed:', err.message);
+    return false;
+  }
+}, []);
+ 
 
   const validateUrlDebounced = useCallback(
     debounce(async (url) => {
