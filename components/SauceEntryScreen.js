@@ -94,14 +94,15 @@ export default function SauceEntryScreen() {
   const getHeatColor = useHeatColor();
 
   useEffect(() => {
-    const val = Math.min(1, Math.max(0, parseInt(heat || '0', 10) / 16000000));
-    Animated.timing(heatAnim, {
-      toValue: val,
-      duration: 250,
-      easing: Easing.out(Easing.cubic),
-      useNativeDriver: false,
-    }).start();
-  }, [heat]);
+  const val = Math.min(1, Math.max(0, parseInt(heat || '0', 10) / 16000000));
+  Animated.timing(heatAnim, {
+    toValue: val,
+    duration: 250,
+    easing: Easing.out(Easing.cubic),
+    useNativeDriver: false,
+  }).start();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [heat]);
 
   const resetForm = () => {
     setSauceName('');
