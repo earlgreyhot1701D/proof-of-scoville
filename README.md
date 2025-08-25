@@ -81,8 +81,6 @@ For full feature parity (verification + on-chain write), use the published [Expo
 ## 🌐 Public Demo Link
 **Expo Link:** [https://expo.dev/@earlgreyhot/proof-of-scoville](https://expo.dev/@earlgreyhot/proof-of-scoville)
 
-(Note: If 404, use the QR-based preview link provided.)
-
 ---
 
 ## 📷 Screenshots
@@ -105,6 +103,9 @@ Here are a few screens from the mobile app in Expo Go, showing functionality:
 ![Architecture Diagram](./assets/images/architecture-diagram.png)
 
 _This diagram shows the full data flow from user input to on-chain write._
+
+---
+⚠️ Note: This prototype mixes JavaScript and TypeScript for speed during development. Future iterations will standardize the codebase.
 
 ---
 
