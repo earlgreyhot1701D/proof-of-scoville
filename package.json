@@ -3,16 +3,19 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
-    "start": "expo start",
-    "reset-project": "node ./scripts/reset-project.js",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web",
-    "lint": "eslint . --ext .js,.ts,.jsx,.tsx",
-    "format": "prettier --write .",
-    "check": "npm run lint && npm run format",
-    "expo-lint": "expo lint"
-  },
+  "start": "expo start",
+  "reset-project": "node ./scripts/reset-project.js",
+  "android": "expo start --android",
+  "ios": "expo start --ios",
+  "web": "expo start --web",
+  "lint": "eslint . --ext .js,.ts,.jsx,.tsx",
+  "lint:fix": "eslint . --ext .js,.ts,.jsx,.tsx --fix",
+  "format": "prettier --write .",
+  "check": "npm run lint && prettier --check .",
+  "expo-lint": "expo lint",
+  "test": "jest"
+},
+
   "dependencies": {
     "@expo/config-plugins": "~10.1.1",
     "@expo/prebuild-config": "~9.0.0",
@@ -68,8 +71,14 @@
     "type": "git",
     "url": "git+https://github.com/earlgreyhot1701D/proof-of-scoville.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["expo",
+  "react-native",
+  "xion",
+  "dave-sdk",
+  "verifiable-data",
+  "ai-summer-camp",
+  "proof-of-scoville"],
+  "author": "La Shara Cordero <lsjcordero@gmail.com>",
   "license": "MIT",
   "type": "commonjs",
   "bugs": {
