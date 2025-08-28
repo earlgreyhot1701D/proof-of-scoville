@@ -12,5 +12,3 @@
   },
   "include": ["app", "lib", "components", "types", "scripts"]
 }
-
-
