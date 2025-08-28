@@ -5,7 +5,7 @@
 
 ---
 
-## 🔍 Project Purpose 
+## 🔍 Project Purpose
 
 **Proof of Scoville** is a mobile-first demo app that explores how verifiable internet data and on-chain logic can support decentralized food safety, trust, and community engagement.
 
@@ -24,6 +24,7 @@ The app demonstrates how verifiable internet data (via a simulated `verifiable.r
 It’s designed for builders exploring zkTLS, verifiable data, and decentralized apps. While playful in tone, it showcases how trust infrastructure can be applied beyond financial or institutional contexts — in this case, helping users verify and record product data in a transparent, structured way.
 
 ### Target Users
+
 - Hackathon participants and judges evaluating zk data flows
 - Developers exploring Dave SDK and XION tools
 - Anyone curious about creative trust applications in food tech
@@ -31,6 +32,7 @@ It’s designed for builders exploring zkTLS, verifiable data, and decentralized
 ---
 
 ## ⚙️ Tech Stack
+
 - **Framework:** React Native (with Expo SDK 53)
 - **Mobile SDK:** Dave (`userMap.set()`)
 - **Verification Logic:** Simulated `verifiable.read()` function
@@ -40,11 +42,12 @@ It’s designed for builders exploring zkTLS, verifiable data, and decentralized
 ---
 
 ## Environment Info
+
 This project was developed and tested in the following environment:
 
-- Node.js: v22.13.1  
-- npm: v11.5.2  
-- Expo CLI: 0.24.21  
+- Node.js: v22.13.1
+- npm: v11.5.2
+- Expo CLI: 0.24.21
 - Expo SDK: 53.0.22
 
 ---
@@ -68,11 +71,13 @@ The key includes the timestamp and sauce name, while the value includes structur
 ## 📚 Installation & Run Instructions
 
 ### Requirements
+
 - Node.js
 - Expo CLI
 - Expo Go app (on mobile)
 
 ### Local Setup
+
 ```bash
 git clone <your-repo-url>
 cd proof-of-scoville
@@ -81,6 +86,7 @@ npx expo start
 ```
 
 To test on a mobile device:
+
 - Open Expo Go
 - Scan the QR code from `npx expo start`
 
@@ -89,6 +95,7 @@ For full feature parity (verification + on-chain write), use the published [Expo
 ---
 
 ## 🌐 Public Demo Link
+
 **Expo Link:** [https://expo.dev/@earlgreyhot/proof-of-scoville](https://expo.dev/@earlgreyhot/proof-of-scoville)
 
 ---
@@ -98,12 +105,15 @@ For full feature parity (verification + on-chain write), use the published [Expo
 Here are a few screens from the mobile app in Expo Go, showing functionality:
 
 ### 🔥 Sauce Entry Form
+
 ![Screenshot 1](./assets/images/screenshot-entry.png)
 
 ### ✅ Source Verified
+
 ![Screenshot 2](./assets/images/screenshot-verified.png)
 
 ### 📝 On-Chain Write Confirmation
+
 ![Screenshot 3](./assets/images/screenshot-submitted.png)
 
 ---
@@ -115,11 +125,13 @@ Here are a few screens from the mobile app in Expo Go, showing functionality:
 _This diagram shows the full data flow from user input to on-chain write._
 
 ---
+
 ⚠️ Note: This prototype mixes JavaScript and TypeScript for speed during development. Future iterations will standardize the codebase.
 
 ---
 
 ## 💪 License
+
 MIT License
 
 ---

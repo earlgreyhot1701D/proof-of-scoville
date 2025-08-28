@@ -147,105 +147,104 @@ export default function SauceEntryScreen() {
   };
 
   // Placeholder for future verifiable.read via zkTLS or a trusted endpoint
-const simulateVerifiableRead = useCallback(async (url) => {
-  if (!url || typeof url !== 'string') return false;
+  const simulateVerifiableRead = useCallback(async (url) => {
+    if (!url || typeof url !== 'string') return false;
 
-  const trustedSignals = [
-    'salsa',
-    'macha',
-    'salsa macha',
-    'bien macha',
-    'chile oil',
-    'chili oil',
-    'mexican salsa',
-    'salsa artesanal',
-    'picante',
-    'comandanta',
-    'mama teav',
-    'la botanera',
-    'valentina',
-    'el yucateco',
-    'tajín',
-    'hot sauce',
-    'hotsauce',
-    'scoville',
-    'scoville heat units',
-    'shu',
-    'spicy sauce',
-    'crispy garlic',
-    'fried shallot',
-    'oil to seed',
-    'pumpkin seed',
-    'garlic confit',
-    'peanut crunch',
-    'crunchy topping',
-    'add to cart',
-    'shop now',
-    'ingredients',
-    'nutrition facts',
-    'family recipe',
-    'heirloom sauce',
-    'salsa casera',
-    'receta familiar',
-    'hecho en méxico',
-    'chile seco',
-    'chile de árbol',
-  ];
+    const trustedSignals = [
+      'salsa',
+      'macha',
+      'salsa macha',
+      'bien macha',
+      'chile oil',
+      'chili oil',
+      'mexican salsa',
+      'salsa artesanal',
+      'picante',
+      'comandanta',
+      'mama teav',
+      'la botanera',
+      'valentina',
+      'el yucateco',
+      'tajín',
+      'hot sauce',
+      'hotsauce',
+      'scoville',
+      'scoville heat units',
+      'shu',
+      'spicy sauce',
+      'crispy garlic',
+      'fried shallot',
+      'oil to seed',
+      'pumpkin seed',
+      'garlic confit',
+      'peanut crunch',
+      'crunchy topping',
+      'add to cart',
+      'shop now',
+      'ingredients',
+      'nutrition facts',
+      'family recipe',
+      'heirloom sauce',
+      'salsa casera',
+      'receta familiar',
+      'hecho en méxico',
+      'chile seco',
+      'chile de árbol',
+    ];
 
-  const tryFetch = async () => {
-    const res = await fetch(url);
-    const html = await res.text();
-    return trustedSignals.some((term) => html.toLowerCase().includes(term));
-  };
+    const tryFetch = async () => {
+      const res = await fetch(url);
+      const html = await res.text();
+      return trustedSignals.some((term) => html.toLowerCase().includes(term));
+    };
 
-  try {
-    return await tryFetch();
-  } catch (err) {
-    console.warn('Verification failed (1st attempt):', err.message);
-    // Retry after brief pause
-    await new Promise((res) => setTimeout(res, 200));
     try {
       return await tryFetch();
-    } catch (err2) {
-      console.warn('Verification failed (retry):', err2.message);
-      return false;
+    } catch (err) {
+      console.warn('Verification failed (1st attempt):', err.message);
+      // Retry after brief pause
+      await new Promise((res) => setTimeout(res, 200));
+      try {
+        return await tryFetch();
+      } catch (err2) {
+        console.warn('Verification failed (retry):', err2.message);
+        return false;
+      }
     }
-  }
-}, []);
+  }, []);
 
   const validateUrlDebounced = useCallback(
-  debounce(async (url) => {
-    if (!url) {
-      setIsVerifiedSource(null);
-      setUrlError('');
-      return;
-    }
-
-    const trimmed = normalizeUrl(url);
-    const isValid = trimmed.startsWith('http') && validateUrl(trimmed);
-    setUrlError(isValid ? '' : 'Invalid URL');
-
-    if (isValid) {
-      // Skip redundant re-check if same URL already verified
-      if (trimmed === lastVerifiedUrl && isVerifiedSource === true) {
+    debounce(async (url) => {
+      if (!url) {
+        setIsVerifiedSource(null);
+        setUrlError('');
         return;
       }
 
-      const verified = await simulateVerifiableRead(trimmed);
+      const trimmed = normalizeUrl(url);
+      const isValid = trimmed.startsWith('http') && validateUrl(trimmed);
+      setUrlError(isValid ? '' : 'Invalid URL');
 
-      if (verified) {
-        setIsVerifiedSource(true);
-        setLastVerifiedUrl(trimmed);
+      if (isValid) {
+        // Skip redundant re-check if same URL already verified
+        if (trimmed === lastVerifiedUrl && isVerifiedSource === true) {
+          return;
+        }
+
+        const verified = await simulateVerifiableRead(trimmed);
+
+        if (verified) {
+          setIsVerifiedSource(true);
+          setLastVerifiedUrl(trimmed);
+        } else {
+          setIsVerifiedSource(false);
+        }
       } else {
-        setIsVerifiedSource(false);
+        setIsVerifiedSource(null);
       }
-    } else {
-      setIsVerifiedSource(null);
-    }
-  }, VALIDATION_RULES.URL_DEBOUNCE_MS),
-  [simulateVerifiableRead, isVerifiedSource, lastVerifiedUrl],
-);
-
+    }, VALIDATION_RULES.URL_DEBOUNCE_MS),
+    [simulateVerifiableRead, isVerifiedSource, lastVerifiedUrl],
+  );
 
   useEffect(() => {
     return () => {
@@ -281,9 +280,9 @@ const simulateVerifiableRead = useCallback(async (url) => {
       smokiness,
       oilSeedRatio: parseFloat(oilSeedRatio),
       ingredientURL: (() => {
-  const normalized = normalizeUrl(ingredientURL);
-  return validateUrl(normalized) ? normalized : null;
-})(),
+        const normalized = normalizeUrl(ingredientURL);
+        return validateUrl(normalized) ? normalized : null;
+      })(),
       timestamp: new Date().toISOString(),
     };
 
@@ -427,17 +426,16 @@ const simulateVerifiableRead = useCallback(async (url) => {
             <Text style={{ color: theme.colors.error, fontSize: 12 }}>{urlError}</Text>
           )}
           {ingredientURL && !urlError && isVerifiedSource !== null ? (
-  <Text
-    style={{
-      color: isVerifiedSource ? theme.colors.heat.mild : theme.colors.error,
-      fontSize: 12,
-      marginTop: 4,
-    }}
-  >
-    {isVerifiedSource ? 'Source Verified ✅' : 'Not Verified ❌'}
-  </Text>
-) : null}
-
+            <Text
+              style={{
+                color: isVerifiedSource ? theme.colors.heat.mild : theme.colors.error,
+                fontSize: 12,
+                marginTop: 4,
+              }}
+            >
+              {isVerifiedSource ? 'Source Verified ✅' : 'Not Verified ❌'}
+            </Text>
+          ) : null}
         </SectionCard>
       </ScrollView>
 
