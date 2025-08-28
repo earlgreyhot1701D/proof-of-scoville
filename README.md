@@ -39,6 +39,16 @@ It’s designed for builders exploring zkTLS, verifiable data, and decentralized
 
 ---
 
+## Environment Info
+This project was developed and tested in the following environment:
+
+- Node.js: v22.13.1  
+- npm: v11.5.2  
+- Expo CLI: 0.24.21  
+- Expo SDK: 53.0.22
+
+---
+
 ## 🔎 How verifiable.read() Works
 
 The app simulates a `verifiable.read()` call by allowing users to enter a sauce source URL, then running a mocked network call using debounced logic and retry support. It mimics the behavior of zkTLS-based trusted web verification.
