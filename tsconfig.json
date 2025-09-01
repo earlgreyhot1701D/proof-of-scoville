@@ -1,14 +1,19 @@
 {
-  "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "strict": true,
     "allowJs": true,
-    "checkJs": false,
+    "checkJs": true,
     "moduleResolution": "node",
     "baseUrl": ".",
     "paths": {
       "@/*": ["./*"]
-    }
+    },
+    "target": "ES2021",
+    "lib": ["DOM", "ES2021"],
+    "jsx": "react-jsx",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true
   },
   "include": ["app", "lib", "components", "types", "scripts"]
 }
+
