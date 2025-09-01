@@ -12,7 +12,9 @@
     "lib": ["DOM", "ES2021"],
     "jsx": "react-jsx",
     "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "./dist",
+    "noEmit": true
   },
   "include": ["app", "lib", "components", "types", "scripts"]
 }
