@@ -3,7 +3,7 @@
     "strict": true,
     "allowJs": true,
     "checkJs": false,
-    "skipLibCheck": false,
+    "skipLibCheck": true,
     "moduleResolution": "node",
     "baseUrl": ".",
     "paths": {
