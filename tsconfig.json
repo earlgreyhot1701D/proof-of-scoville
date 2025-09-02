@@ -2,20 +2,30 @@
   "compilerOptions": {
     "strict": true,
     "allowJs": true,
-    "checkJs": true,
+    "checkJs": false,
+    "skipLibCheck": false,
     "moduleResolution": "node",
     "baseUrl": ".",
     "paths": {
       "@/*": ["./*"]
     },
     "target": "ES2021",
-    "lib": ["DOM", "ES2021"],
+    "lib": ["ES2021"],
     "jsx": "react-jsx",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": "./dist",
-    "noEmit": true
+    "noEmit": true,
+    "types": ["react", "react-native"]
   },
-  "include": ["app", "lib", "components", "types", "scripts"]
+  "include": [
+    "app",
+    "lib",
+    "components",
+    "types",
+    "scripts",
+    "global.d.ts",
+    "declarations.d.ts"
+  ]
 }
 
