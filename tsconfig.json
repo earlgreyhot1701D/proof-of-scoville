@@ -4,19 +4,26 @@
     "allowJs": true,
     "checkJs": false,
     "skipLibCheck": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"]
+      "@/*": [
+        "./*"
+      ]
     },
     "target": "ES2021",
-    "lib": ["ES2021"],
+    "lib": [
+      "ES2021"
+    ],
     "jsx": "react-jsx",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": "./dist",
     "noEmit": true,
-    "types": ["react", "react-native"]
+    "types": [
+      "react",
+      "react-native"
+    ]
   },
   "include": [
     "app",
@@ -26,6 +33,6 @@
     "scripts",
     "global.d.ts",
     "declarations.d.ts"
-  ]
+  ],
+  "extends": "expo/tsconfig.base"
 }
-

@@ -16,7 +16,7 @@ import {
 import { userMap } from '../lib/dave';
 
 import { ChipGroup } from './chip';
-import { useHeatColor } from './helpers';
+import { useHeatColor } from './heathelpers';
 import { SectionCard } from './SectionCard';
 import { StickySubmit } from './StickySubmit';
 import { theme } from './theme';

@@ -3,6 +3,7 @@ export default {
     name: "Proof of Scoville",
     slug: "proof-of-scoville",
     version: "1.0.0",
+     jsEngine: "jsc",
     extra: {
       eas: {
         projectId: "b31bbdee-3062-4d48-9d06-649d02e82d26",
