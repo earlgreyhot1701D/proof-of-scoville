@@ -66,12 +66,9 @@ function validateUrl(url) {
 function normalizeUrl(rawUrl) {
   if (!rawUrl) return '';
   let trimmed = rawUrl.trim();
-
-  // If no protocol is present, prepend https://
   if (!/^https?:\/\//i.test(trimmed)) {
     trimmed = 'https://' + trimmed;
   }
-
   return trimmed;
 }
 
@@ -90,11 +87,8 @@ const validateSauceForm = ({ heat, oilSeedRatio, urlError, ingredientURL, isVeri
 
   if (urlError) return { field: 'url', message: urlError };
 
-  // Only enforce verification when a URL is provided
-  if (ingredientURL?.trim()) {
-    if (isVerifiedSource !== true) {
-      return { field: 'url', message: 'Source must be verified to submit' };
-    }
+  if (ingredientURL?.trim() && isVerifiedSource !== true) {
+    return { field: 'url', message: 'Source must be verified to submit' };
   }
 
   return null;
@@ -113,11 +107,9 @@ export default function SauceEntryScreen() {
   const [isVerifiedSource, setIsVerifiedSource] = useState(null);
   const [lastVerifiedUrl, setLastVerifiedUrl] = useState('');
 
-  // refs for friendlier focus on validation errors
   const heatRef = useRef(null);
   const ratioRef = useRef(null);
   const urlRef = useRef(null);
-
   const heatAnim = useRef(new Animated.Value(0)).current;
   const getHeatColor = useHeatColor();
 
@@ -147,52 +139,10 @@ export default function SauceEntryScreen() {
     setIsVerifiedSource(null);
   };
 
-  // Placeholder for future verifiable.read via zkTLS or a trusted endpoint
   const simulateVerifiableRead = useCallback(async (url) => {
     if (!url || typeof url !== 'string') return false;
 
-    const trustedSignals = [
-      'salsa',
-      'macha',
-      'salsa macha',
-      'bien macha',
-      'chile oil',
-      'chili oil',
-      'mexican salsa',
-      'salsa artesanal',
-      'picante',
-      'comandanta',
-      'mama teav',
-      'la botanera',
-      'valentina',
-      'el yucateco',
-      'tajín',
-      'hot sauce',
-      'hotsauce',
-      'scoville',
-      'scoville heat units',
-      'shu',
-      'spicy sauce',
-      'crispy garlic',
-      'fried shallot',
-      'oil to seed',
-      'pumpkin seed',
-      'garlic confit',
-      'peanut crunch',
-      'crunchy topping',
-      'add to cart',
-      'shop now',
-      'ingredients',
-      'nutrition facts',
-      'family recipe',
-      'heirloom sauce',
-      'salsa casera',
-      'receta familiar',
-      'hecho en méxico',
-      'chile seco',
-      'chile de árbol',
-    ];
-
+    const trustedSignals = ['salsa', 'macha', 'bien macha', 'crispy garlic', 'add to cart'];
     const tryFetch = async () => {
       const res = await fetch(url);
       const html = await res.text();
@@ -201,14 +151,11 @@ export default function SauceEntryScreen() {
 
     try {
       return await tryFetch();
-    } catch (err) {
-      console.warn('Verification failed (1st attempt):', err.message);
-      // Retry after brief pause
+    } catch {
       await new Promise((res) => setTimeout(res, 200));
       try {
         return await tryFetch();
-      } catch (err2) {
-        console.warn('Verification failed (retry):', err2.message);
+      } catch {
         return false;
       }
     }
@@ -227,13 +174,8 @@ export default function SauceEntryScreen() {
       setUrlError(isValid ? '' : 'Invalid URL');
 
       if (isValid) {
-        // Skip redundant re-check if same URL already verified
-        if (trimmed === lastVerifiedUrl && isVerifiedSource === true) {
-          return;
-        }
-
+        if (trimmed === lastVerifiedUrl && isVerifiedSource === true) return;
         const verified = await simulateVerifiableRead(trimmed);
-
         if (verified) {
           setIsVerifiedSource(true);
           setLastVerifiedUrl(trimmed);
@@ -247,21 +189,10 @@ export default function SauceEntryScreen() {
     [simulateVerifiableRead, isVerifiedSource, lastVerifiedUrl],
   );
 
-  useEffect(() => {
-    return () => {
-      validateUrlDebounced.cancel?.();
-    };
-  }, [validateUrlDebounced]);
+  useEffect(() => () => validateUrlDebounced.cancel?.(), [validateUrlDebounced]);
 
   const handleSubmit = async () => {
-    const validation = validateSauceForm({
-      heat,
-      oilSeedRatio,
-      urlError,
-      ingredientURL,
-      isVerifiedSource,
-    });
-
+    const validation = validateSauceForm({ heat, oilSeedRatio, urlError, ingredientURL, isVerifiedSource });
     if (validation) {
       Alert.alert('Validation Error', validation.message);
       if (validation.field === 'heat') heatRef.current?.focus();
@@ -291,18 +222,15 @@ export default function SauceEntryScreen() {
       await userMap.set(data);
       resetForm();
       Alert.alert('Success', 'Sauce logged!');
-    } catch (_err) {
+    } catch {
       Alert.alert('Chain Error', 'Network busy, try again');
     }
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={{ flex: 1 }}
-    >
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
       <ScrollView
-        contentContainerStyle={{ padding: theme.space.lg, paddingBottom: 120 }}
+        contentContainerStyle={{ padding: theme.spacing.lg, paddingBottom: 120 }}
         keyboardShouldPersistTaps="handled"
       >
         <SectionCard title="Name">
@@ -320,29 +248,23 @@ export default function SauceEntryScreen() {
           <TextInput
             ref={heatRef}
             value={heat}
-            onChangeText={(v) => {
-              // digits only for heat
-              const t = v.replace(/[^\d]/g, '');
-              setHeat(t);
-            }}
+            onChangeText={(v) => setHeat(v.replace(/[^\d]/g, ''))}
             placeholder="e.g. 8000"
             keyboardType="number-pad"
             style={inputStyle}
             accessibilityLabel="Scoville heat"
             returnKeyType="next"
           />
-          <Text style={{ color: theme.colors.textMuted, fontSize: 12 }}>
-            Typical: Mild &lt;5k, Medium 5k–50k, Hot 50k+
+          <Text style={{ color: theme.colors.text.light, fontSize: 12 }}>
+            Typical: Mild {'<'} 5k, Medium 5k–50k, Hot 50k+
           </Text>
-          <View
-            style={{
-              height: 8,
-              backgroundColor: theme.colors.surfaceAlt,
-              borderRadius: 999,
-              overflow: 'hidden',
-              marginTop: 6,
-            }}
-          >
+          <View style={{
+            height: 8,
+            backgroundColor: theme.colors.surfaceAlt,
+            borderRadius: theme.radius.pill,
+            overflow: 'hidden',
+            marginTop: theme.spacing.xs,
+          }}>
             <Animated.View
               style={{
                 height: '100%',
@@ -354,28 +276,13 @@ export default function SauceEntryScreen() {
         </SectionCard>
 
         <SectionCard title="Flavor">
-          <ChipGroup
-            label="Garlic Intensity"
-            options={SAUCE_OPTIONS.garlic}
-            value={garlic}
-            onChange={setGarlic}
-          />
-          <ChipGroup
-            label="Smokiness Level"
-            options={SAUCE_OPTIONS.smokiness}
-            value={smokiness}
-            onChange={setSmokiness}
-          />
+          <ChipGroup label="Garlic Intensity" options={SAUCE_OPTIONS.garlic} value={garlic} onChange={setGarlic} />
+          <ChipGroup label="Smokiness Level" options={SAUCE_OPTIONS.smokiness} value={smokiness} onChange={setSmokiness} />
         </SectionCard>
 
         <SectionCard title="Texture">
-          <ChipGroup
-            label="Crunch Source"
-            options={SAUCE_OPTIONS.crispSources}
-            value={crispSource}
-            onChange={setCrispSource}
-          />
-          <Text style={{ fontSize: 12, color: theme.colors.textMuted, marginBottom: 4 }}>
+          <ChipGroup label="Crunch Source" options={SAUCE_OPTIONS.crispSources} value={crispSource} onChange={setCrispSource} />
+          <Text style={{ fontSize: 12, color: theme.colors.text.light, marginBottom: 4 }}>
             {crispSourceHints[crispSource]}
           </Text>
           <ChipGroup
@@ -392,7 +299,6 @@ export default function SauceEntryScreen() {
             ref={ratioRef}
             value={oilSeedRatio}
             onChangeText={(v) => {
-              // allow digits and a single dot
               const t = v.replace(/[^0-9.]/g, '');
               const parts = t.split('.');
               const cleaned = parts.length > 2 ? `${parts[0]}.${parts.slice(1).join('')}` : t;
@@ -423,17 +329,13 @@ export default function SauceEntryScreen() {
             accessibilityLabel="Ingredient link URL"
             returnKeyType="done"
           />
-          {!!urlError && (
-            <Text style={{ color: theme.colors.error, fontSize: 12 }}>{urlError}</Text>
-          )}
+          {!!urlError && <Text style={{ color: theme.colors.error, fontSize: 12 }}>{urlError}</Text>}
           {ingredientURL && !urlError && isVerifiedSource !== null ? (
-            <Text
-              style={{
-                color: isVerifiedSource ? theme.colors.heat.mild : theme.colors.error,
-                fontSize: 12,
-                marginTop: 4,
-              }}
-            >
+            <Text style={{
+              color: isVerifiedSource ? theme.colors.heat.mild : theme.colors.error,
+              fontSize: 12,
+              marginTop: 4,
+            }}>
               {isVerifiedSource ? 'Source Verified ✅' : 'Not Verified ❌'}
             </Text>
           ) : null}
@@ -441,12 +343,7 @@ export default function SauceEntryScreen() {
       </ScrollView>
 
       <StickySubmit
-        disabled={
-          !heat ||
-          !oilSeedRatio ||
-          !!urlError ||
-          (!!ingredientURL?.trim() && isVerifiedSource !== true)
-        }
+        disabled={!heat || !oilSeedRatio || !!urlError || (!!ingredientURL?.trim() && isVerifiedSource !== true)}
         onPress={handleSubmit}
       />
     </KeyboardAvoidingView>
@@ -456,9 +353,11 @@ export default function SauceEntryScreen() {
 const inputStyle = {
   borderWidth: 1,
   borderColor: theme.colors.outline,
-  padding: 10,
-  marginBottom: 16,
-  borderRadius: theme.radii.md,
+  padding: theme.spacing.sm,
+  marginBottom: theme.spacing.md,
+  borderRadius: theme.radius.md,
   backgroundColor: theme.colors.surfaceAlt,
-  color: theme.colors.text,
+  color: theme.colors.text.primary,
+  fontFamily: theme.typography.fontFamily,
 };
+

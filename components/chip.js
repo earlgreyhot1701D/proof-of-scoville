@@ -1,9 +1,7 @@
-// Chip.js — Chip and ChipGroup components
-
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { theme } from './theme';
 
-export function Chip({ label, active, onPress, disabled, colorOverride }) {
+export function Chip({ label, active, onPress, disabled, colorOverride, variant = 'default' }) {
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -11,8 +9,16 @@ export function Chip({ label, active, onPress, disabled, colorOverride }) {
       style={[
         chipStyles.chip,
         active && {
-          backgroundColor: colorOverride || theme.colors.accent,
-          borderColor: colorOverride || theme.colors.accent,
+          backgroundColor: colorOverride
+            ? colorOverride
+            : variant === 'flavor'
+            ? theme.colors.heat.medium
+            : theme.colors.accent,
+          borderColor: colorOverride
+            ? colorOverride
+            : variant === 'flavor'
+            ? theme.colors.heat.medium
+            : theme.colors.accent,
         },
         disabled && { opacity: 0.5 },
       ]}
@@ -27,13 +33,14 @@ export function Chip({ label, active, onPress, disabled, colorOverride }) {
 
 export function ChipGroup({ label, options, value, onChange, disabled, hint, getColor }) {
   return (
-    <View style={{ marginBottom: theme.space.lg }}>
+    <View style={{ marginBottom: theme.spacing.lg }}>
       <Text
         style={{
-          fontSize: theme.type.label,
-          color: theme.colors.text,
+          fontSize: theme.typography.size.label,
+          color: theme.colors.text.primary,
           fontWeight: '700',
-          marginBottom: theme.space.sm,
+          marginBottom: theme.spacing.sm,
+          fontFamily: theme.typography.fontFamily,
         }}
       >
         {label}
@@ -48,6 +55,7 @@ export function ChipGroup({ label, options, value, onChange, disabled, hint, get
             onPress={() => !disabled && onChange(opt)}
             disabled={disabled}
             colorOverride={getColor?.(opt)}
+            variant={getColor ? 'flavor' : 'heat'} // Optional logic
           />
         ))}
       </View>
@@ -55,9 +63,10 @@ export function ChipGroup({ label, options, value, onChange, disabled, hint, get
       {!!hint && (
         <Text
           style={{
-            color: theme.colors.textMuted,
+            color: theme.colors.text.light,
             fontSize: 12,
             marginTop: 4,
+            fontFamily: theme.typography.fontFamily,
           }}
         >
           {hint}
@@ -71,7 +80,7 @@ const chipStyles = StyleSheet.create({
   chip: {
     paddingHorizontal: 14,
     minHeight: 36,
-    borderRadius: theme.radii.pill,
+    borderRadius: theme.radius.pill,
     backgroundColor: theme.colors.surfaceAlt,
     borderWidth: 1,
     borderColor: theme.colors.outline,
@@ -81,9 +90,10 @@ const chipStyles = StyleSheet.create({
     marginBottom: 10,
   },
   chipText: {
-    fontSize: theme.type.chip,
-    lineHeight: theme.type.chip + 8,
-    color: theme.colors.text,
+    fontSize: theme.typography.size.chip,
+    lineHeight: theme.typography.size.chip + 8,
+    color: theme.colors.text.primary,
+    fontFamily: theme.typography.fontFamily,
     includeFontPadding: true,
     letterSpacing: 0.2,
   },
@@ -96,3 +106,4 @@ const chipStyles = StyleSheet.create({
     flexWrap: 'wrap',
   },
 });
+
