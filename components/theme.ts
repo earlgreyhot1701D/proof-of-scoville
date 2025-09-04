@@ -1,5 +1,4 @@
 // constants/theme.ts
-
 export const theme = {
   colors: {
     neutral: {
@@ -18,6 +17,11 @@ export const theme = {
     green: {
       jade: '#6A8F6D',
       light: '#A5C9A1',
+    },
+    heat: {
+      mild: '#48C774',
+      medium: '#FFDD57',
+      hot: '#F14668',
     },
     white: '#FFFFFF',
     border: '#E0E0E0',
