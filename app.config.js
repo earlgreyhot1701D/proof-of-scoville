@@ -2,7 +2,7 @@ export default {
   expo: {
     name: "Proof of Scoville",
     slug: "proof-of-scoville",
-    version: "1.0.0",
+    version: "1.0.3",
      jsEngine: "jsc",
     extra: {
       eas: {
