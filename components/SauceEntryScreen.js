@@ -12,13 +12,13 @@ import {
   View,
 } from 'react-native';
 import { createCondimentEntry } from '../lib/dave';
-
 import { getHeatComparison } from '../lib/heatUtils';
 import { ChipGroup } from './chip';
 import { useHeatColor } from './heathelpers';
 import { SectionCard } from './SectionCard';
 import { StickySubmit } from './StickySubmit';
 import { theme } from './theme';
+
 
 
 const VALIDATION_RULES = {
@@ -43,15 +43,24 @@ const SAUCE_OPTIONS = {
   ],
   crispLevels: ['light', 'medium', 'heavy'],
   smokiness: ['none', 'light', 'medium', 'strong'],
+  texture: ['smooth', 'chunky', 'oily', 'sticky', 'crunchy'], 
 };
 
 const crispSourceHints = {
   none: '',
   'tortilla-chip': 'Think restaurant salsa crunch',
-  'pumpkin-seed': 'Classic salsa macha style',
+  'pumpkin-seed': 'Earthy and rich seed crunch', // 🆕 updated
   sesame: 'Toasty and nutty crunch',
   garlic: 'Crispy confit edge',
   onion: 'Fried shallot or crisped onion bits',
+  peanut: 'Classic salsa macha flavor', // stays as-is
+};
+const sauceTextureHints = {
+  smooth: 'Blended base with no visible bits',
+  chunky: 'Visible pieces like seeds or chilis',
+  oily: 'Oil-forward, likely to separate',
+  sticky: 'Thick, syrupy or caramelized base',
+  crunchy: 'Bits of fried garlic, onion, or seeds',
 };
 
 function validateUrl(url) {
@@ -106,6 +115,8 @@ export default function SauceEntryScreen() {
   const [urlError, setUrlError] = useState('');
   const [isVerifiedSource, setIsVerifiedSource] = useState(null);
   const [lastVerifiedUrl, setLastVerifiedUrl] = useState('');
+const [sauceTexture, setSauceTexture] = useState('smooth');
+
 
   const heatRef = useRef(null);
   const ratioRef = useRef(null);
@@ -310,19 +321,51 @@ useEffect(() => {
           <ChipGroup label="Smokiness Level" options={SAUCE_OPTIONS.smokiness} value={smokiness} onChange={setSmokiness} />
         </SectionCard>
 
-        <SectionCard title="Texture">
-          <ChipGroup label="Crunch Source" options={SAUCE_OPTIONS.crispSources} value={crispSource} onChange={setCrispSource} />
-          <Text style={{ fontSize: 12, color: theme.colors.text.light, marginBottom: 4 }}>
-            {crispSourceHints[crispSource]}
-          </Text>
-          <ChipGroup
-            label="Crunch Level"
-            options={SAUCE_OPTIONS.crispLevels}
-            value={crispLevel}
-            onChange={setCrispLevel}
-            disabled={crispSource === 'none'}
-          />
-        </SectionCard>
+       <SectionCard title="Texture">
+  <ChipGroup
+    label="Crunch Source"
+    options={SAUCE_OPTIONS.crispSources}
+    value={crispSource}
+    onChange={setCrispSource}
+  />
+  <Text style={{ fontSize: 12, color: theme.colors.text.light, marginBottom: 4 }}>
+    {crispSourceHints[crispSource]}
+  </Text>
+
+  <ChipGroup
+    label="Crunch Level"
+    options={SAUCE_OPTIONS.crispLevels}
+    value={crispLevel}
+    onChange={setCrispLevel}
+    disabled={crispSource === 'none'}
+  />
+
+  <ChipGroup
+    label="Smokiness"
+    options={SAUCE_OPTIONS.smokiness}
+    value={smokiness}
+    onChange={setSmokiness}
+  />
+
+  <ChipGroup
+    label="Sauce Texture"
+    options={SAUCE_OPTIONS.texture}
+    value={sauceTexture}
+    onChange={setSauceTexture}
+  />
+  {!!sauceTexture && (
+    <Text
+      style={{
+        fontSize: 12,
+        color: theme.colors.text.light,
+        marginTop: 4,
+        fontStyle: 'italic',
+      }}
+    >
+      {sauceTextureHints[sauceTexture] || ''}
+    </Text>
+  )}
+</SectionCard>
 
     <SectionCard title="Oil-to-Seed Ratio">
   <TextInput
