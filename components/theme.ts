@@ -3,32 +3,32 @@
 export const theme = {
   colors: {
     neutral: {
-      base: '#E0A080',
-      light: '#F9F4EF',
-      dark: '#C7745C',
+      base: '#E0A080',         // earthy orange base
+      light: '#F9F4EF',        // background card color
+      dark: '#C7745C',         // richer accent brown-orange
     },
-    accent: {
-      chili: '#B33939',
-      chiliDark: '#8C2B2B',
-    },
-    text: {
-      primary: '#333333',
-      light: '#555555',
-    },
-    green: {
-      jade: '#6A8F6D',
-      light: '#A5C9A1',
-    },
+    accent: '#B33939',          // spicy chili base — used for active chips
+    surface: '#FFFDF8',         // warm off-white for unselected chips / cards
+    outline: '#CCCCCC',         // default border for unselected chips
+    border: '#E0E0E0',          // used in SectionCard
+    surfaceAlt: '#EFEFEF',      // used in backgrounds
+
     heat: {
       mild: '#48C774',
       medium: '#FFDD57',
       hot: '#F14668',
     },
+    text: {
+      primary: '#333333',       // standard dark readable text
+      light: '#555555',         // subtle labels / helper text
+    },
+    textMuted: '#666666',       // tags, helper hints
     white: '#FFFFFF',
-    border: '#E0E0E0',
-    outline: '#CCCCCC',
-    surfaceAlt: '#EFEFEF',
-    textMuted: '#666666',
+
+    green: {
+      jade: '#6A8F6D',
+      light: '#A5C9A1',
+    },
   },
 
   spacing: {
@@ -70,3 +70,4 @@ export const theme = {
 } as const;
 
 export type Theme = typeof theme;
+

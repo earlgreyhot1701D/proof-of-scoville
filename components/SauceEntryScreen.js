@@ -324,9 +324,9 @@ export default function SauceEntryScreen() {
   };
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1, backgroundColor: theme.colors.surface  }}>
       <ScrollView
-        contentContainerStyle={{ padding: theme.spacing.lg, paddingBottom: 120 }}
+        contentContainerStyle={{ padding: theme.spacing.lg, paddingBottom: 120, backgroundColor: theme.colors.surface, }}
         keyboardShouldPersistTaps="handled"
       >
         <SectionCard title="Name">
