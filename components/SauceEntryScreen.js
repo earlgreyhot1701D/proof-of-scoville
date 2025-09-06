@@ -111,6 +111,7 @@ export default function SauceEntryScreen() {
   const ratioRef = useRef(null);
   const urlRef = useRef(null);
   const heatAnim = useRef(new Animated.Value(0)).current;
+  const oilAnim = useRef(new Animated.Value(0)).current;
   const getHeatColor = useHeatColor();
 
   useEffect(() => {
@@ -125,6 +126,17 @@ export default function SauceEntryScreen() {
       useNativeDriver: false,
     }).start();
   }, [heat, heatAnim]);
+
+useEffect(() => {
+  const parsed = parseFloat(oilSeedRatio || '0');
+  const normalized = isNaN(parsed) ? 0 : Math.min(1, Math.max(0, parsed));
+  Animated.timing(oilAnim, {
+    toValue: normalized,
+    duration: 250,
+    easing: Easing.out(Easing.cubic),
+    useNativeDriver: false,
+  }).start();
+}, [oilSeedRatio]);
 
   const resetForm = () => {
     setSauceName('');
@@ -312,23 +324,60 @@ export default function SauceEntryScreen() {
           />
         </SectionCard>
 
-        <SectionCard title="Oil-to-Seed Ratio">
-          <TextInput
-            ref={ratioRef}
-            value={oilSeedRatio}
-            onChangeText={(v) => {
-              const t = v.replace(/[^0-9.]/g, '');
-              const parts = t.split('.');
-              const cleaned = parts.length > 2 ? `${parts[0]}.${parts.slice(1).join('')}` : t;
-              setOilSeedRatio(cleaned);
-            }}
-            placeholder="0.0–1.0"
-            keyboardType="decimal-pad"
-            style={inputStyle}
-            accessibilityLabel="Oil to seed ratio"
-            returnKeyType="next"
-          />
-        </SectionCard>
+    <SectionCard title="Oil-to-Seed Ratio">
+  <TextInput
+    ref={ratioRef}
+    value={oilSeedRatio}
+    onChangeText={(v) => setOilSeedRatio(v.replace(/[^0-9.]/g, ''))}
+    placeholder="e.g. 0.6"
+    keyboardType="decimal-pad"
+    style={inputStyle}
+    accessibilityLabel="Oil to seed ratio"
+    returnKeyType="next"
+  />
+  <Text style={{ color: theme.colors.text.light, fontSize: 12 }}>
+    0.0 = all seeds, 1.0 = all oil
+  </Text>
+
+  {/* Visual bar */}
+  <View
+    style={{
+      height: 8,
+      backgroundColor: theme.colors.surfaceAlt,
+      borderRadius: theme.radius.pill,
+      overflow: 'hidden',
+      marginTop: theme.spacing.xs,
+    }}
+  >
+    <Animated.View
+      style={{
+        height: '100%',
+        width: oilAnim.interpolate({ inputRange: [0, 1], outputRange: ['2%', '100%'] }),
+        backgroundColor: '#c58f4b',
+        opacity: oilAnim, // 👈 Fade in as it grows
+      }}
+    />
+  </View>
+
+  {/* Ratio tag */}
+  {!isNaN(Number(oilSeedRatio)) && oilSeedRatio !== '' && (
+    <Text
+      style={{
+        fontSize: 14,
+        color: theme.colors.text.primary,
+        marginTop: theme.spacing.sm,
+        marginBottom: theme.spacing.sm,
+        opacity: 0.9,
+      }}
+    >
+      {Number(oilSeedRatio) < 0.25
+        ? '🥜 Mostly seeds'
+        : Number(oilSeedRatio) > 0.50
+        ? '💧 Mostly oil'
+        : '🟰 Balanced'}
+    </Text>
+  )}
+</SectionCard>
 
         <SectionCard title="Ingredient Link">
           <TextInput
@@ -358,6 +407,7 @@ export default function SauceEntryScreen() {
             </Text>
           ) : null}
         </SectionCard>
+        
       </ScrollView>
 
       <StickySubmit
