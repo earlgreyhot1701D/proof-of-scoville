@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { theme } from './theme';
 
 export function Chip({ label, active, onPress, disabled, colorOverride, variant = 'default' }) {
@@ -26,7 +26,14 @@ export function Chip({ label, active, onPress, disabled, colorOverride, variant 
       accessibilityState={{ disabled, selected: !!active }}
       accessibilityLabel={label}
     >
-      <Text style={[chipStyles.chipText, active && chipStyles.chipTextActive]}>{label}</Text>
+      <Text
+        style={[
+          chipStyles.chipText,
+          active && chipStyles.chipTextActive,
+        ]}
+      >
+        {label}
+      </Text>
     </TouchableOpacity>
   );
 }
@@ -55,7 +62,7 @@ export function ChipGroup({ label, options, value, onChange, disabled, hint, get
             onPress={() => !disabled && onChange(opt)}
             disabled={disabled}
             colorOverride={getColor?.(opt)}
-            variant={getColor ? 'flavor' : 'heat'} // Optional logic
+            variant={getColor ? 'flavor' : 'heat'}
           />
         ))}
       </View>
@@ -93,9 +100,9 @@ const chipStyles = StyleSheet.create({
     fontSize: theme.typography.size.chip,
     lineHeight: theme.typography.size.chip + 8,
     color: theme.colors.text.primary,
-    fontFamily: theme.typography.fontFamily,
     includeFontPadding: true,
     letterSpacing: 0.2,
+    fontFamily: Platform.select({ ios: 'System', android: undefined }),
   },
   chipTextActive: {
     color: '#000',
@@ -106,4 +113,5 @@ const chipStyles = StyleSheet.create({
     flexWrap: 'wrap',
   },
 });
+
 
