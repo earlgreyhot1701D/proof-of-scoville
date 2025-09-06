@@ -1,5 +1,3 @@
-// SauceEntryScreen.js – Feature Complete for Checkpoint 2 🌶️
-
 import debounce from 'lodash.debounce';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
@@ -13,13 +11,15 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import { userMap } from '../lib/dave';
+import { createCondimentEntry } from '../lib/dave';
 
+import { getHeatComparison } from '../lib/heatUtils';
 import { ChipGroup } from './chip';
 import { useHeatColor } from './heathelpers';
 import { SectionCard } from './SectionCard';
 import { StickySubmit } from './StickySubmit';
 import { theme } from './theme';
+
 
 const VALIDATION_RULES = {
   MAX_SCOVILLE: 16000000,
@@ -219,11 +219,19 @@ export default function SauceEntryScreen() {
     };
 
     try {
-      await userMap.set(data);
+      const result = await createCondimentEntry(data);
+      console.log('📦 Chain Result:', result);
+
+      if (!result.success) {
+        Alert.alert('Chain Error', result.error || 'Network busy, try again');
+        return;
+      }
+
       resetForm();
       Alert.alert('Success', 'Sauce logged!');
-    } catch {
-      Alert.alert('Chain Error', 'Network busy, try again');
+    } catch (e) {
+      console.error('🔥 Unexpected submit error:', e);
+      Alert.alert('Chain Error', 'Something went wrong');
     }
   };
 
@@ -245,35 +253,45 @@ export default function SauceEntryScreen() {
         </SectionCard>
 
         <SectionCard title="Heat">
-          <TextInput
-            ref={heatRef}
-            value={heat}
-            onChangeText={(v) => setHeat(v.replace(/[^\d]/g, ''))}
-            placeholder="e.g. 8000"
-            keyboardType="number-pad"
-            style={inputStyle}
-            accessibilityLabel="Scoville heat"
-            returnKeyType="next"
-          />
-          <Text style={{ color: theme.colors.text.light, fontSize: 12 }}>
-            Typical: Mild {'<'} 5k, Medium 5k–50k, Hot 50k+
-          </Text>
-          <View style={{
-            height: 8,
-            backgroundColor: theme.colors.surfaceAlt,
-            borderRadius: theme.radius.pill,
-            overflow: 'hidden',
-            marginTop: theme.spacing.xs,
-          }}>
-            <Animated.View
-              style={{
-                height: '100%',
-                width: heatAnim.interpolate({ inputRange: [0, 1], outputRange: ['2%', '100%'] }),
-                backgroundColor: getHeatColor(heat),
-              }}
-            />
-          </View>
-        </SectionCard>
+  <TextInput
+    ref={heatRef}
+    value={heat}
+    onChangeText={(v) => setHeat(v.replace(/[^\d]/g, ''))}
+    placeholder="e.g. 8000"
+    keyboardType="number-pad"
+    style={inputStyle}
+    accessibilityLabel="Scoville heat"
+    returnKeyType="next"
+  />
+  <Text style={{ color: theme.colors.text.light, fontSize: 12 }}>
+    Typical: Mild {'<'} 5k, Medium 5k–50k, Hot 50k+
+  </Text>
+
+  <View
+    style={{
+      height: 8,
+      backgroundColor: theme.colors.surfaceAlt,
+      borderRadius: theme.radius.pill,
+      overflow: 'hidden',
+      marginTop: theme.spacing.xs,
+    }}
+  >
+    <Animated.View
+      style={{
+        height: '100%',
+        width: heatAnim.interpolate({ inputRange: [0, 1], outputRange: ['2%', '100%'] }),
+        backgroundColor: getHeatColor(heat),
+      }}
+    />
+  </View>
+
+  {/* ✅ Correct spot for Heat Comparison display */}
+  {!isNaN(Number(heat)) && heat !== '' && (
+    <Text style={{ fontSize: 14, color: 'black', marginTop: theme.spacing.sm }}>
+      Heat Level: {getHeatComparison(Number(heat))}
+    </Text>
+  )}
+</SectionCard>
 
         <SectionCard title="Flavor">
           <ChipGroup label="Garlic Intensity" options={SAUCE_OPTIONS.garlic} value={garlic} onChange={setGarlic} />
@@ -360,4 +378,3 @@ const inputStyle = {
   color: theme.colors.text.primary,
   fontFamily: theme.typography.fontFamily,
 };
-
