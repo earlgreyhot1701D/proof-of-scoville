@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   button: {
-    backgroundColor: theme.colors.accent.chili,
+    backgroundColor: theme.colors.accent, // ✅ fixed bug here
     borderRadius: theme.radius.md,
     paddingVertical: theme.spacing.md,
     alignItems: 'center',
@@ -66,5 +66,6 @@ const styles = StyleSheet.create({
     color: theme.colors.text.light,
   },
 });
+
 
 
