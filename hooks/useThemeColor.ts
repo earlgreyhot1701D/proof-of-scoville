@@ -1,21 +1,39 @@
+import { ColorSchemeName, useColorScheme } from 'react-native';
+import { theme } from '../components/theme';
+
+type ThemeProps = {
+  light?: string;
+  dark?: string;
+};
+
+function resolveColorPath(obj: any, path: string): string | undefined {
+  return path.split('.').reduce((acc, key) => (acc && acc[key] ? acc[key] : undefined), obj);
+}
+
 /**
- * Learn more about light and dark modes:
- * https://docs.expo.dev/guides/color-schemes/
+ * This hook supports nested keys like 'text.primary' or 'heat.mild'.
  */
-
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
-
 export function useThemeColor(
-  props: { light?: string; dark?: string },
-  colorName: keyof typeof Colors.light & keyof typeof Colors.dark,
+  props: ThemeProps,
+  colorName: string // use string to allow 'text.primary' etc.
 ) {
-  const theme = useColorScheme() ?? 'light';
-  const colorFromProps = props[theme];
+  const themeScheme: ColorSchemeName = useColorScheme() ?? 'light';
+  const colorFromProps = props[themeScheme];
 
   if (colorFromProps) {
     return colorFromProps;
-  } else {
-    return Colors[theme][colorName];
   }
+
+  const themeColor = resolveColorPath(theme.colors, colorName);
+
+  if (typeof themeColor !== 'string') {
+    console.warn(
+      `Theme color "${colorName}" not found or not a valid color string.`
+    );
+    return '#000'; // fallback
+  }
+
+  return themeColor;
 }
+
+

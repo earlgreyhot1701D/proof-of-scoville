@@ -1,33 +1,49 @@
-// constants/theme.ts
+// theme.ts
 
 export const theme = {
   colors: {
+    // base surfaces
+    surface: '#ffffff',
+    surfaceAlt: 'rgba(255,255,255,0.85)',
+    border: '#dddddd',
+    outline: '#cccccc',
+    error: '#d32f2f',
+
+    // 🔥 chili-red primary accent (used for headers, highlights)
+    accent: '#e03131',
+
+    // used by SectionCard and backgrounds
     neutral: {
-      base: '#E0A080',         // earthy orange base
-      light: '#F9F4EF',        // background card color
-      dark: '#C7745C',         // richer accent brown-orange
+      light: 'rgba(255,253,248,0.85)', // parchment-tinted card bg
+      mid: '#f3f3f3',
+      dark: '#222222',
     },
-    accent: '#B33939',          // spicy chili base — used for active chips
-    surface: '#FFFDF8',         // warm off-white for unselected chips / cards
-    outline: '#CCCCCC',         // default border for unselected chips
-    border: '#E0E0E0',          // used in SectionCard
-    surfaceAlt: '#EFEFEF',      // used in backgrounds
 
-    heat: {
-      mild: '#48C774',
-      medium: '#FFDD57',
-      hot: '#F14668',
-    },
+    // text color variations
     text: {
-      primary: '#333333',       // standard dark readable text
-      light: '#555555',         // subtle labels / helper text
+      primary: '#1b1b1b',
+      light: 'rgba(0,0,0,0.6)',
+      inverse: '#ffffff',
     },
-    textMuted: '#666666',       // tags, helper hints
-    white: '#FFFFFF',
 
-    green: {
-      jade: '#6A8F6D',
-      light: '#A5C9A1',
+    // used by Chip & oil/heat UI
+    heat: {
+      mild: '#74b816',
+      medium: '#f59f00',
+      hot: '#e03131',
+    },
+  },
+
+  typography: {
+    fontFamily: 'System',
+    size: {
+      heading: 20,
+      body: 16,
+      small: 14,
+    },
+    weight: {
+      regular: '400',
+      bold: '700',
     },
   },
 
@@ -37,37 +53,13 @@ export const theme = {
     md: 12,
     lg: 16,
     xl: 24,
+    xxl: 32,
   },
 
   radius: {
     sm: 4,
     md: 8,
-    lg: 16,
+    lg: 12,
     pill: 999,
   },
-
-  shadow: {
-    soft: '0 1px 4px rgba(0,0,0,0.1)',
-    card: '0 2px 8px rgba(0,0,0,0.15)',
-  },
-
-  typography: {
-    fontFamily: 'System',
-    size: {
-      chip: 14,
-      label: 16,
-      body: 16,
-      heading: 20,
-      display: 24,
-    },
-    weight: {
-      regular: '400',
-      medium: '500',
-      semi: '600',
-      bold: '700',
-    },
-  },
-} as const;
-
-export type Theme = typeof theme;
-
+};

@@ -1,6 +1,6 @@
-
+import { useNavigation } from '@react-navigation/native';
 import debounce from 'lodash.debounce';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import {
   Alert,
   Animated,
@@ -19,8 +19,58 @@ import { useHeatColor } from './heathelpers';
 import { SectionCard } from './SectionCard';
 import { StickySubmit } from './StickySubmit';
 import { theme } from './theme';
+import ThemedScreen from './ThemedScreen';
 
+// Shared input style
+const inputStyle = {
+  borderWidth: 1,
+  borderColor: theme.colors.outline,
+  padding: theme.spacing.sm,
+  marginBottom: theme.spacing.md,
+  borderRadius: theme.radius.md,
+  backgroundColor: theme.colors.surfaceAlt,
+  color: theme.colors.text.primary,
+  fontFamily: theme.typography.fontFamily,
+};
 
+// Flavor tag chip styles
+const tagRow = {
+  flexDirection: 'row',
+  flexWrap: 'wrap',
+  alignItems: 'flex-start',
+  marginTop: theme.spacing.sm,
+  marginHorizontal: -4,
+};
+
+const tagChip = {
+  borderWidth: 1,
+  borderColor: theme.colors.border,
+  backgroundColor: theme.colors.surfaceAlt,
+  paddingVertical: 8,
+  paddingHorizontal: 12,
+  borderRadius: theme.radius.pill,
+  minWidth: 88,
+  maxWidth: '90%',
+  flexShrink: 0,
+  marginRight: 8,
+  marginBottom: 8,
+  alignSelf: 'flex-start',
+};
+
+const tagText = {
+  fontSize: 14,
+  color: theme.colors.text.primary,
+  fontFamily: Platform.select({
+    ios: theme.typography.fontFamily,
+    android: 'System',
+    default: theme.typography.fontFamily,
+  }),
+  lineHeight: 20,
+  includeFontPadding: false,
+  textAlignVertical: 'center',
+  flexShrink: 1,
+  flexWrap: 'wrap',
+};
 
 const VALIDATION_RULES = {
   MAX_SCOVILLE: 16000000,
@@ -44,7 +94,7 @@ const SAUCE_OPTIONS = {
   ],
   crispLevels: ['light', 'medium', 'heavy'],
   smokiness: ['none', 'light', 'medium', 'strong'],
-  texture: ['smooth', 'chunky', 'oily', 'sticky', 'crunchy'], 
+  texture: ['smooth', 'chunky', 'oily', 'sticky', 'crunchy'],
 };
 
 const crispSourceHints = {
@@ -117,6 +167,18 @@ export default function SauceEntryScreen() {
   const [isVerifiedSource, setIsVerifiedSource] = useState(null);
   const [lastVerifiedUrl, setLastVerifiedUrl] = useState('');
   const [sauceTexture, setSauceTexture] = useState('smooth');
+   const navigation = useNavigation();
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title: 'Proof of Scoville',
+      headerTintColor: '#e03131',
+      headerTitleStyle: {
+        fontWeight: 'bold',
+      },
+    });
+  }, [navigation]);
+
 
   // 🔎 Live flavor tags derived from inputs
   const flavorTags = useMemo(() => {
@@ -324,249 +386,202 @@ export default function SauceEntryScreen() {
   };
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1, backgroundColor: theme.colors.surface  }}>
-      <ScrollView
-        contentContainerStyle={{ padding: theme.spacing.lg, paddingBottom: 120, backgroundColor: theme.colors.surface, }}
-        keyboardShouldPersistTaps="handled"
+    <ThemedScreen>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
       >
-        <SectionCard title="Name">
-          <TextInput
-            value={sauceName}
-            onChangeText={setSauceName}
-            placeholder="e.g. Macha Inferno"
-            style={inputStyle}
-            accessibilityLabel="Sauce name"
-            returnKeyType="next"
-          />
-        </SectionCard>
-
-        <SectionCard title="Heat">
-          <TextInput
-            ref={heatRef}
-            value={heat}
-            onChangeText={(v) => setHeat(v.replace(/[^\d]/g, ''))}
-            placeholder="e.g. 8000"
-            keyboardType="number-pad"
-            style={inputStyle}
-            accessibilityLabel="Scoville heat"
-            returnKeyType="next"
-          />
-          <Text style={{ color: theme.colors.text.light, fontSize: 12 }}>
-            Typical: Mild {'<'} 5k, Medium 5k to 50k, Hot 50k and above
-          </Text>
-
-          <View
-            style={{
-              height: 8,
-              backgroundColor: theme.colors.surfaceAlt,
-              borderRadius: theme.radius.pill,
-              overflow: 'hidden',
-              marginTop: theme.spacing.xs,
-            }}
-          >
-            <Animated.View
-              style={{
-                height: '100%',
-                width: heatAnim.interpolate({ inputRange: [0, 1], outputRange: ['2%', '100%'] }),
-                backgroundColor: getHeatColor(heat),
-              }}
+        <ScrollView
+          contentContainerStyle={{
+            padding: theme.spacing.lg,
+            paddingBottom: 120,
+          }}
+          keyboardShouldPersistTaps="handled"
+        >
+          <SectionCard title="Name">
+            <TextInput
+              value={sauceName}
+              onChangeText={setSauceName}
+              placeholder="e.g. Molcajete Macha or Chili Crackle"
+              style={inputStyle}
+              accessibilityLabel="Sauce name"
+              returnKeyType="next"
             />
-          </View>
+          </SectionCard>
 
-          {!!heat && !isNaN(Number(heat)) && (
-            <Text style={{ fontSize: 14, color: 'black', marginTop: theme.spacing.sm }}>
-              Heat Level: {getHeatComparison(Number(heat))}
+          <SectionCard title="Heat">
+            <TextInput
+              ref={heatRef}
+              value={heat}
+              onChangeText={(v) => setHeat(v.replace(/[^\d]/g, ''))}
+              placeholder="e.g. 8000"
+              keyboardType="number-pad"
+              style={inputStyle}
+              accessibilityLabel="Scoville heat"
+              returnKeyType="next"
+            />
+            <Text style={{ color: theme.colors.text.light, fontSize: 12 }}>
+              Typical: Mild {'<'} 5k, Medium 5k to 50k, Hot 50k and above
             </Text>
-          )}
-        </SectionCard>
 
-        <SectionCard title="Flavor">
-          <ChipGroup label="Garlic Intensity" options={SAUCE_OPTIONS.garlic} value={garlic} onChange={setGarlic} />
-          <ChipGroup label="Smokiness Level" options={SAUCE_OPTIONS.smokiness} value={smokiness} onChange={setSmokiness} />
-        </SectionCard>
-
-<SectionCard title="Texture">
-  <ChipGroup
-    label="Crunch Source"
-    options={SAUCE_OPTIONS.crispSources}
-    value={crispSource}
-    onChange={setCrispSource}
-  />
-
-  <ChipGroup
-    label="Crunch Level"
-    options={SAUCE_OPTIONS.crispLevels}
-    value={crispLevel}
-    onChange={setCrispLevel}
-    disabled={crispSource === 'none'}
-  />
-
-  <ChipGroup
-    label="Sauce Texture"
-    options={SAUCE_OPTIONS.texture}
-    value={sauceTexture}
-    onChange={setSauceTexture}
-  />
-</SectionCard>
-
-        <SectionCard title="Oil-to-Seed Ratio">
-          <TextInput
-            ref={ratioRef}
-            value={oilSeedRatio}
-            onChangeText={(v) => setOilSeedRatio(v.replace(/[^0-9.]/g, ''))}
-            placeholder="e.g. 0.6"
-            keyboardType="decimal-pad"
-            style={inputStyle}
-            accessibilityLabel="Oil to seed ratio"
-            returnKeyType="next"
-          />
-          <Text style={{ color: theme.colors.text.light, fontSize: 12 }}>
-            0.0 equals all seeds, 1.0 equals all oil
-          </Text>
-
-          {/* Visual bar */}
-          <View
-            style={{
-              height: 8,
-              backgroundColor: theme.colors.surfaceAlt,
-              borderRadius: theme.radius.pill,
-              overflow: 'hidden',
-              marginTop: theme.spacing.xs,
-            }}
-          >
-            <Animated.View
+            <View
               style={{
-                height: '100%',
-                width: oilAnim.interpolate({ inputRange: [0, 1], outputRange: ['2%', '100%'] }),
-                backgroundColor: '#c58f4b',
-                opacity: oilAnim,
-              }}
-            />
-          </View>
-
-          {/* Ratio tag */}
-          {!isNaN(Number(oilSeedRatio)) && oilSeedRatio !== '' && (
-            <Text
-              style={{
-                fontSize: 14,
-                color: theme.colors.text.primary,
-                marginTop: theme.spacing.sm,
-                marginBottom: theme.spacing.sm,
-                opacity: 0.9,
+                height: 8,
+                backgroundColor: theme.colors.surfaceAlt,
+                borderRadius: theme.radius.pill,
+                overflow: 'hidden',
+                marginTop: theme.spacing.xs,
               }}
             >
-              {Number(oilSeedRatio) < 0.25
-                ? '🥜 Mostly seeds'
-                : Number(oilSeedRatio) > 0.5
-                ? '💧 Mostly oil'
-                : '🟰 Balanced'}
-            </Text>
-          )}
-        </SectionCard>
-
-        {/* ✅ New Flavor Tags section */}
-        <SectionCard title="Flavor Tags">
-          {flavorTags.length === 0 ? (
-            <Text style={{ color: theme.colors.text.light, fontSize: 12 }}>
-              Tags will appear as you enter heat, garlic, crunch, smoke, ratio, and texture.
-            </Text>
-          ) : (
-            <View style={tagRow}>
-              {flavorTags.map((t, i) => (
-                <View key={`${t}-${i}`} style={tagChip} accessible accessibilityLabel={t}>
-                  <Text style={tagText}>{t}</Text>
-                </View>
-              ))}
+              <Animated.View
+                style={{
+                  height: '100%',
+                  width: heatAnim.interpolate({ inputRange: [0, 1], outputRange: ['2%', '100%'] }),
+                  backgroundColor: getHeatColor(heat),
+                }}
+              />
             </View>
-          )}
-        </SectionCard>
 
-        <SectionCard title="Ingredient Link">
-          <TextInput
-            ref={urlRef}
-            value={ingredientURL}
-            onChangeText={(url) => {
-              setIngredientURL(url);
-              setUrlError('');
-              validateUrlDebounced(url);
-            }}
-            placeholder="https://..."
-            style={[inputStyle, urlError ? { borderColor: theme.colors.error } : null]}
-            autoCapitalize="none"
-            autoCorrect={false}
-            keyboardType="url"
-            accessibilityLabel="Ingredient link URL"
-            returnKeyType="done"
-          />
-          {!!urlError && <Text style={{ color: theme.colors.error, fontSize: 12 }}>{urlError}</Text>}
-          {ingredientURL && !urlError && isVerifiedSource !== null ? (
-            <Text style={{
-              color: isVerifiedSource ? theme.colors.heat.mild : theme.colors.error,
-              fontSize: 12,
-              marginTop: 4,
-            }}>
-              {isVerifiedSource ? 'Source Verified ✅' : 'Not Verified ❌'}
+            {!!heat && !isNaN(Number(heat)) && (
+              <Text style={{ fontSize: 14, color: 'black', marginTop: theme.spacing.sm }}>
+                Heat Level: {getHeatComparison(Number(heat))}
+              </Text>
+            )}
+          </SectionCard>
+
+          <SectionCard title="Flavor">
+            <ChipGroup label="Garlic Intensity" options={SAUCE_OPTIONS.garlic} value={garlic} onChange={setGarlic} />
+            <ChipGroup label="Smokiness Level" options={SAUCE_OPTIONS.smokiness} value={smokiness} onChange={setSmokiness} />
+          </SectionCard>
+
+          <SectionCard title="Texture">
+            <ChipGroup
+              label="Crunch Source"
+              options={SAUCE_OPTIONS.crispSources}
+              value={crispSource}
+              onChange={setCrispSource}
+            />
+
+            <ChipGroup
+              label="Crunch Level"
+              options={SAUCE_OPTIONS.crispLevels}
+              value={crispLevel}
+              onChange={setCrispLevel}
+              disabled={crispSource === 'none'}
+            />
+
+            <ChipGroup
+              label="Sauce Texture"
+              options={SAUCE_OPTIONS.texture}
+              value={sauceTexture}
+              onChange={setSauceTexture}
+            />
+          </SectionCard>
+
+          <SectionCard title="Oil-to-Seed Ratio">
+            <TextInput
+              ref={ratioRef}
+              value={oilSeedRatio}
+              onChangeText={(v) => setOilSeedRatio(v.replace(/[^0-9.]/g, ''))}
+              placeholder="e.g. 0.6"
+              keyboardType="decimal-pad"
+              style={inputStyle}
+              accessibilityLabel="Oil to seed ratio"
+              returnKeyType="next"
+            />
+            <Text style={{ color: theme.colors.text.light, fontSize: 12 }}>
+              0.0 equals all seeds, 1.0 equals all oil
             </Text>
-          ) : null}
-        </SectionCard>
-        
-      </ScrollView>
 
-      <StickySubmit
-        disabled={!heat || !oilSeedRatio || !!urlError || (!!ingredientURL?.trim() && isVerifiedSource !== true)}
-        onPress={handleSubmit}
-      />
-    </KeyboardAvoidingView>
+            <View
+              style={{
+                height: 8,
+                backgroundColor: theme.colors.surfaceAlt,
+                borderRadius: theme.radius.pill,
+                overflow: 'hidden',
+                marginTop: theme.spacing.xs,
+              }}
+            >
+              <Animated.View
+                style={{
+                  height: '100%',
+                  width: oilAnim.interpolate({ inputRange: [0, 1], outputRange: ['2%', '100%'] }),
+                  backgroundColor: '#c58f4b',
+                  opacity: oilAnim,
+                }}
+              />
+            </View>
+
+            {!isNaN(Number(oilSeedRatio)) && oilSeedRatio !== '' && (
+              <Text
+                style={{
+                  fontSize: 14,
+                  color: theme.colors.text.primary,
+                  marginTop: theme.spacing.sm,
+                  marginBottom: theme.spacing.sm,
+                  opacity: 0.9,
+                }}
+              >
+                {Number(oilSeedRatio) < 0.25
+                  ? '🥜 Mostly seeds'
+                  : Number(oilSeedRatio) > 0.5
+                  ? '💧 Mostly oil'
+                  : '🟰 Balanced'}
+              </Text>
+            )}
+          </SectionCard>
+
+          <SectionCard title="Flavor Tags">
+            {flavorTags.length === 0 ? (
+              <Text style={{ color: theme.colors.text.light, fontSize: 12 }}>
+                Tags will appear as you enter heat, garlic, crunch, smoke, ratio, and texture.
+              </Text>
+            ) : (
+              <View style={tagRow}>
+                {flavorTags.map((t, i) => (
+                  <View key={`${t}-${i}`} style={tagChip} accessible accessibilityLabel={t}>
+                    <Text style={tagText}>{t}</Text>
+                  </View>
+                ))}
+              </View>
+            )}
+          </SectionCard>
+
+          <SectionCard title="Ingredient Link">
+            <TextInput
+              ref={urlRef}
+              value={ingredientURL}
+              onChangeText={(url) => {
+                setIngredientURL(url);
+                setUrlError('');
+                validateUrlDebounced(url);
+              }}
+              placeholder="https://..."
+              style={[inputStyle, urlError ? { borderColor: theme.colors.error } : null]}
+              autoCapitalize="none"
+              autoCorrect={false}
+              keyboardType="url"
+              accessibilityLabel="Ingredient link URL"
+              returnKeyType="done"
+            />
+            {!!urlError && <Text style={{ color: theme.colors.error, fontSize: 12 }}>{urlError}</Text>}
+            {ingredientURL && !urlError && isVerifiedSource !== null ? (
+              <Text style={{
+                color: isVerifiedSource ? theme.colors.heat.mild : theme.colors.error,
+                fontSize: 12,
+                marginTop: 4,
+              }}>
+                {isVerifiedSource ? 'Source Verified ✅' : 'Not Verified ❌'}
+              </Text>
+            ) : null}
+          </SectionCard>
+        </ScrollView>
+
+        <StickySubmit
+          disabled={!heat || !oilSeedRatio || !!urlError || (!!ingredientURL?.trim() && isVerifiedSource !== true)}
+          onPress={handleSubmit}
+        />
+      </KeyboardAvoidingView>
+    </ThemedScreen>
   );
 }
-
-// Shared input style
-const inputStyle = {
-  borderWidth: 1,
-  borderColor: theme.colors.outline,
-  padding: theme.spacing.sm,
-  marginBottom: theme.spacing.md,
-  borderRadius: theme.radius.md,
-  backgroundColor: theme.colors.surfaceAlt,
-  color: theme.colors.text.primary,
-  fontFamily: theme.typography.fontFamily,
-};
-
-// Flavor tag chip styles
-const tagRow = {
-  flexDirection: 'row',
-  flexWrap: 'wrap',
-  alignItems: 'flex-start',
-  marginTop: theme.spacing.sm,
-  marginHorizontal: -4,   // simulates gap across RN versions
-};
-
-const tagChip = {
-  borderWidth: 1,
-  borderColor: theme.colors.border,
-  backgroundColor: theme.colors.surfaceAlt,
-  paddingVertical: 8,      // more breathing room
-  paddingHorizontal: 12,
-  borderRadius: theme.radius.pill,
-  minWidth: 88,            // prevents over-compression
-  maxWidth: '90%',         // gives room to wrap naturally
-  flexShrink: 0,           // stop container from collapsing too far
-  marginRight: 8,
-  marginBottom: 8,
-  alignSelf: 'flex-start', // keeps multi-line chips aligned to top
-};
-
-const tagText = {
-  fontSize: 14,
-  color: theme.colors.text.primary,
-  fontFamily: Platform.select({
-    ios: theme.typography.fontFamily,
-    android: 'System',      // ensures emoji fallback
-    default: theme.typography.fontFamily,
-  }),
-  lineHeight: 20,           // prevents clipping on emoji + text
-  includeFontPadding: false,
-  textAlignVertical: 'center',
-  flexShrink: 1,            // let text wrap instead of clipping
-  flexWrap: 'wrap',         // key: allows multi-line text
-};

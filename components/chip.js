@@ -72,7 +72,7 @@ export function ChipGroup({ label, options, value, onChange, disabled, hint, get
     <View style={{ marginBottom: theme.spacing.lg }}>
       <Text style={chipStyles.groupLabel}>{label}</Text>
 
-      <View style={[chipStyles.rowWrap, disabled && { opacity: 0.6 }]}> 
+      <View style={[chipStyles.rowWrap, disabled && { opacity: 0.6 }]}>
         {options.map((opt) => (
           <Chip
             key={opt}
@@ -93,8 +93,8 @@ export function ChipGroup({ label, options, value, onChange, disabled, hint, get
 
 const chipStyles = StyleSheet.create({
   chip: {
-    paddingHorizontal: 14,
-    minHeight: 36,
+    paddingHorizontal: 16,
+    minHeight: 40,
     borderRadius: theme.radius.pill,
     borderWidth: 1,
     alignItems: 'center',
@@ -104,10 +104,12 @@ const chipStyles = StyleSheet.create({
   },
   chipText: {
     fontSize: theme.typography.size.chip,
-    lineHeight: theme.typography.size.chip + 8,
+    lineHeight: theme.typography.size.chip + 10,
     color: theme.colors.text.primary,
     fontFamily: Platform.select({ ios: 'System', android: undefined }),
     fontWeight: '500',
+    includeFontPadding: false,
+    letterSpacing: 0.2,
   },
   chipTextActive: {
     color: '#fff',
@@ -131,5 +133,3 @@ const chipStyles = StyleSheet.create({
     flexWrap: 'wrap',
   },
 });
-
-
