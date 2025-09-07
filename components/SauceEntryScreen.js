@@ -157,16 +157,16 @@ const validateSauceForm = ({ heat, oilSeedRatio, urlError, ingredientURL, isVeri
 export default function SauceEntryScreen() {
   const [sauceName, setSauceName] = useState('');
   const [heat, setHeat] = useState('');
-  const [garlic, setGarlic] = useState('med');
-  const [crispSource, setCrispSource] = useState('sauce-texture');
-  const [crispLevel, setCrispLevel] = useState('medium');
-  const [smokiness, setSmokiness] = useState('none');
+  const [garlic, setGarlic] = useState('');
+  const [crispSource, setCrispSource] = useState('');
+  const [crispLevel, setCrispLevel] = useState('');
+  const [smokiness, setSmokiness] = useState('');
   const [oilSeedRatio, setOilSeedRatio] = useState('');
   const [ingredientURL, setIngredientURL] = useState('');
   const [urlError, setUrlError] = useState('');
   const [isVerifiedSource, setIsVerifiedSource] = useState(null);
   const [lastVerifiedUrl, setLastVerifiedUrl] = useState('');
-  const [sauceTexture, setSauceTexture] = useState('smooth');
+  const [sauceTexture, setSauceTexture] = useState('');
    const navigation = useNavigation();
 
   useLayoutEffect(() => {

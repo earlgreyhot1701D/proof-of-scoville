@@ -1,5 +1,3 @@
-// Final: Improved ChipGroup + Cultural Flavor Styles
-
 import { useRef } from 'react';
 import { Animated, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { theme } from './theme';
@@ -23,7 +21,6 @@ export function Chip({ label, active, onPress, disabled, colorOverride, variant 
     }).start();
   };
 
-  const isActive = !!active;
   const chipColor = colorOverride || (variant === 'flavor' ? theme.colors.heat.medium : theme.colors.accent);
 
   return (
@@ -35,7 +32,7 @@ export function Chip({ label, active, onPress, disabled, colorOverride, variant 
         disabled={disabled}
         style={[
           chipStyles.chip,
-          isActive && {
+          active && {
             backgroundColor: chipColor,
             borderColor: chipColor,
             shadowColor: '#000',
@@ -44,20 +41,20 @@ export function Chip({ label, active, onPress, disabled, colorOverride, variant 
             shadowRadius: 2,
             elevation: 3,
           },
-          !isActive && {
+          !active && {
             backgroundColor: theme.colors.surface,
             borderColor: theme.colors.outline,
           },
           disabled && { opacity: 0.5 },
         ]}
         accessibilityRole="button"
-        accessibilityState={{ disabled, selected: isActive }}
+        accessibilityState={{ disabled, selected: !!active }}
         accessibilityLabel={label}
       >
         <Text
           style={[
             chipStyles.chipText,
-            isActive && chipStyles.chipTextActive,
+            active && chipStyles.chipTextActive,
           ]}
         >
           {label}
@@ -77,7 +74,7 @@ export function ChipGroup({ label, options, value, onChange, disabled, hint, get
           <Chip
             key={opt}
             label={opt}
-            active={value === opt}
+            active={!!value && value === opt} // ✅ no chip active unless value is set
             onPress={() => !disabled && onChange(opt)}
             disabled={disabled}
             colorOverride={getColor?.(opt)}
@@ -133,3 +130,4 @@ const chipStyles = StyleSheet.create({
     flexWrap: 'wrap',
   },
 });
+
